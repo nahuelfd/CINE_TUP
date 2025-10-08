@@ -7,7 +7,7 @@ export const MOVIES = [
     director: "Christopher Nolan",
     category: "Sci-Fi",
     summary: "Un ladrón roba secretos a través de los sueños.",
-    imageUrl: "https://m.media-amazon.com/images/I/51TnOZ0P1DL._AC_.jpg",
+    imageUrl: "https://static.wikia.nocookie.net/doblaje/images/9/9a/Elpadrino.jpg/revision/latest/scale-to-width-down/1000?cb=20211023042804&path-prefix=es",
     duration: 148,
     language: "Español",
     isAvailable: true,

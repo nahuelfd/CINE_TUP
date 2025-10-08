@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 import { Form, Button, Col, FormGroup, Row } from "react-bootstrap"
 
-import AuthContainer from "../auth/authContainer/AuthContainer"
+import AuthContainer from "../authContainer/AuthContainer"
 
 const Register = () => {
     const [name, setName] = useState("");
