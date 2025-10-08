@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 
 import { initialErrors } from './Login.data';
 
-import AuthContainer from "../authContainer/AuthContainer";
+import AuthContainer from "../auth/authContainer/AuthContainer";
 
 
 
