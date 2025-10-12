@@ -1,8 +1,9 @@
-import { useState } from "react"
-import { Card, Badge, Button } from "react-bootstrap"
+import { Card, Badge } from "react-bootstrap"
+import { Link } from "react-router";
 
 
 const MovieItem = ({
+  id,
   title,
   category,
   duration,
@@ -10,7 +11,7 @@ const MovieItem = ({
   isAvailable
 }) => {
   return (
-    
+    <Link to={`/peliculas/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
      <Card className="movie-card h-100 shadow-sm">
       <Card.Img variant="top" src={imageUrl} className="movie-img" />
       <Card.Body>
@@ -25,6 +26,7 @@ const MovieItem = ({
         )}
       </Card.Body>
     </Card>
+    </Link>
   );
 };
 
