@@ -3,3 +3,33 @@
   margin: 0 auto;    
   padding: 2rem;     
 }
+/*Cards Peliculas*/
+.movie-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.movie-img {
+  height: 300px;
+  object-fit: cover;
+}
+
+.movie-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.movie-info {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+/*Cards Peliculas*/
