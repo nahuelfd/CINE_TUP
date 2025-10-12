@@ -11,7 +11,7 @@ const Dashboard = () => {
   }}
   return (
     <div>
-      <h1 className="text-center mt-4 mb-4">PELICULAS EN CARTELERA</h1>
+      <h1 className="text-center mt-4 mb-4">PELICULAS DISPONIBLES</h1>
       {/*<NewMovie onAddMovie={handleAddMovie}/> Agregar peliculas solo para admins*/}
       <MovieList movies={movies}/>
     </div>
