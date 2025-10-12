@@ -11,6 +11,7 @@ const MovieList = ({ movies }) => {
         {movies.map(movie => (
           <Col key={movie.id}>
             <MovieItem
+              id={movie.id}
               title={movie.title}
               category={movie.category}
               duration={`${movie.duration} min`}
