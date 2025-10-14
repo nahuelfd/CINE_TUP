@@ -1,10 +1,13 @@
 import express from "express";
-import { PORT } from "./config.js";
+
 import movieRoutes from './routes/movie.routes.js';
 import { sequelize } from "./db.js";
+import dotenv from "dotenv";
+
 
 import './entities/Movie.js';
-
+dotenv.config();
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 try {
