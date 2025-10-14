@@ -16,7 +16,7 @@ const Login = () => {
     const navigate = useNavigate()
     const emailRef = useRef(null)
     const passwordRef = useRef(null)
-    const { onLogin } = useContext(AuthContext)
+    //const { onLogin } = useContext(AuthContext)
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -83,6 +83,7 @@ const Login = () => {
 
     return (
         <AuthContainer>
+            
             <Form onSubmit={handleSubmit}>
                 <FormGroup className="mb-4">
                     <Form.Label>Email</Form.Label>
