@@ -16,6 +16,7 @@ const Login = () => {
     const navigate = useNavigate()
     const emailRef = useRef(null)
     const passwordRef = useRef(null)
+    const { onLogin } = useContext(AuthContext)
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
