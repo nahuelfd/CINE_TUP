@@ -5,6 +5,7 @@ import MovieTickets from './components/library/movieTickets/MovieTickets';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from './components/navBar/NavBar';
 import Home from "./pages/Home";
+import Register from './components/auth/register/Register';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/peliculas" element={<Dashboard />} />
           <Route path="/peliculas/:id" element={<MovieTickets />} />
         </Routes>
