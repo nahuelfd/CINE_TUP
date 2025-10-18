@@ -32,6 +32,21 @@ const Register = () => {
     const handleRegister = (event) => {
         event.preventDefault();
 
+        if (!name) {
+            setErrors((prevState) => ({ ...prevState, name: true }));
+            return;
+        }
+
+        if (!email) {
+            setErrors((prevState) => ({ ...prevState, email: true }));
+            return;
+        }
+
+        if (!password) {
+            setErrors((prevState) => ({ ...prevState, password: true }));
+            return;
+        }
+
         fetch("http://localhost:3000/register", {
             headers: {
                 "Content-Type": "application/json",
@@ -89,7 +104,7 @@ const Register = () => {
                 </FormGroup>
                 <Row>
                     <Col>
-                        <Button variant="secondary" onClick={handleLoginClick} >Iniciar sesión</Button>
+                        <Button variant="secondary" onClick={handleLoginClick} >Volver</Button>
                     </Col>
                     <Col md={6} className="d-flex justify-content-end">
                         <Button variant="primary" type="submit">
