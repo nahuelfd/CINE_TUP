@@ -19,7 +19,6 @@ export const findMovie = async (req, res) => {
 
   res.json(movie);
 };
-title, director, category, summary,imageUrl, duration, lenguage, isAvailable
 
 export const createMovie = async (req, res) => {
   const { title, director, category, summary, imageUrl, duration, lenguage, isAvailable } = req.body;

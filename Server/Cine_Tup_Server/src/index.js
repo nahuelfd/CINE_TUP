@@ -3,10 +3,12 @@ import express from "express";
 import { PORT } from "./config.js";
 import movieRoutes from './routes/movie.routes.js';
 import userRoutes from './routes/user.routes.js';
+import ticketRoutes from "./routes/ticket.routes.js";
 import { sequelize } from "./db.js";
 
 import './entities/Movie.js';
 import './entities/User.js';
+import './entities/Ticket.js';
 
 const app = express();
 
@@ -22,6 +24,7 @@ try {
     app.listen(PORT);
     app.use(movieRoutes);
     app.use(userRoutes);
+    app.use(ticketRoutes)
     
     await sequelize.sync();
 

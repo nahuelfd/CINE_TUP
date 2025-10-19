@@ -1,8 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db.js";
 
-// Creacion de usuario en la base de datos, verificando que los input ingresados sean correctos
-
 export const User = sequelize.define("user", {
     id: {
         type: DataTypes.INTEGER,
