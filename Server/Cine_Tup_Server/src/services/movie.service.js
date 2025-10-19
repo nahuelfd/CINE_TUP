@@ -68,7 +68,7 @@ export const createMovie = async (req, res) => {
 
 };
 
-export const updateBook = async (req, res) => {
+export const updateMovie = async (req, res) => {
 
     const { id } = req.params;
 
@@ -120,7 +120,7 @@ export const updateBook = async (req, res) => {
 
  
 
-export const deleteBook = async (req, res) => {
+export const deleteMovie = async (req, res) => {
 
     const { id } = req.params;
 
