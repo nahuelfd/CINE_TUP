@@ -2,144 +2,87 @@ import { Movie } from "../entities/Movie.js";
 
 import { ERROR_CODE } from "../errorCodes.js";
 
- 
-
 export const findMovies = async (_, res) => {
-
-    const movies = await Movie.findAll()
-
-    res.json(movies);
-
+  const movies = await Movie.findAll();
+  res.json(movies);
 };
-
- 
 
 export const findMovie = async (req, res) => {
+  const { id } = req.params;
 
-    const { id } = req.params;
+  const movie = await Movie.findByPk(id);
 
-    const Movie = await Movie.findByPk(id);
+  if (!movie)
+    return res
+      .status(ERROR_CODE.NOT_FOUND)
+      .send({ message: "Pelicula no encontrada" });
 
-    if (!movie)
-
-        return res.status(ERROR_CODE.NOT_FOUND).send({ message: "Pelicula no encontrada" });
-
- 
-
-    res.json(movie);
-
+  res.json(movie);
 };
-
- 
 
 export const createMovie = async (req, res) => {
+  const { title, director, category, summary, imageUrl, duration, lenguage, isAvailable } = req.body;
 
-    const { title, director, rating, summary, imageUrl, isAvailable } = req.body;
+  if (!title || !director)
+    return res
+      .status(ERROR_CODE.BAD_REQUEST)
+      .send({ message: "Título y director son campos requeridos" });
 
- 
+  const newMovie = await Movie.create({
+    title, 
+    director, 
+    category, 
+    summary, 
+    imageUrl, 
+    duration,
+    lenguage,
+    isAvailable
+  });
 
-    // Title and author are required
-
-    if (!title || !director)
-
-        return res.status(ERROR_CODE.BAD_REQUEST).send({ message: "Título y director son campos requeridos" });
-
- 
-
-    const newMovie = await Book.create({
-
-        title,
-
-        author,
-
-        rating,
-
-        pageCount,
-
-        summary,
-
-        imageUrl,
-
-        isAvailable
-
-    })
-
-    res.json(newBook)
-
+  res.json(newmovie);
 };
 
-export const updateBook = async (req, res) => {
+export const updateMovie = async (req, res) => {
+  const { id } = req.params;
 
-    const { id } = req.params;
+  const { title, director, category, summary, imageUrl, duration, lenguage, isAvailable } =
+    req.body;
 
- 
 
-    const { title, author, rating, pageCount, summary, imageUrl, isAvailable } = req.body;
+  if (!title || !director)
+    return res
+      .status(ERROR_CODE.BAD_REQUEST)
+      .send({ message: "Título y autor son campos requeridos" });
 
- 
+  const movie = await Movie.findByPk(id);
 
-    // Title and author are required
+  await movie.update({
+    title, 
+    director, 
+    category, 
+    summary, 
+    imageUrl, 
+    duration,
+    lenguage,
+    isAvailable
+  });
 
-    if (!title || !author)
+  await movie.save();
 
-        return res.status(ERROR_CODE.BAD_REQUEST).send({ message: "Título y autor son campos requeridos" });
-
- 
-
-    const book = await Book.findByPk(id);
-
- 
-
-    await book.update({
-
-        title,
-
-        author,
-
-        rating,
-
-        pageCount,
-
-        summary,
-
-        imageUrl,
-
-        isAvailable
-
-    });
-
- 
-
-    await book.save();
-
- 
-
-    res.send(book);
-
+  res.send(movie);
 };
 
- 
+export const deleteMovie = async (req, res) => {
+  const { id } = req.params;
 
-export const deleteBook = async (req, res) => {
+  const movie = await Movie.findByPk(id);
 
-    const { id } = req.params;
+  if (!movie)
+    return res
+      .status(ERROR_CODE.NOT_FOUND)
+      .send({ message: "Pelicula no encontrada" });
 
- 
+  await movie.destroy();
 
-    const book = await Book.findByPk(id);
-
- 
-
-    if (!book)
-
-        return res.status(ERROR_CODE.NOT_FOUND).send({ message: "Libro no encontrado" });
-
- 
-
-    await book.destroy();
-
- 
-
-    res.send(`Borrando libro con ID ${id}`);
-
+  res.send(`Borrando pelicula con ID ${id}`);
 };

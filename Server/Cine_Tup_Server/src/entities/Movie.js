@@ -35,4 +35,5 @@ export const Movie = sequelize.define("movie", {
         defaultValue: false
     }
 
+
 }, { timestamps: false })

@@ -1,0 +1,47 @@
+.add-movie-form {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #eef2f5;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.add-movie-form h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.add-movie-form label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+.add-movie-form input,
+.add-movie-form textarea,
+.add-movie-form select {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.add-movie-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #5c6bc0;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-movie-form button:hover {
+  background-color: #3f51b5;
+}
