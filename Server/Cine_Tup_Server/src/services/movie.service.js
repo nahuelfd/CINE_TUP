@@ -43,7 +43,8 @@ export const createMovie = async (req, res) => {
 };
 
 export const updateMovie = async (req, res) => {
-  const { id } = req.params;
+
+    const { id } = req.params;
 
   const { title, director, category, summary, imageUrl, duration, lenguage, isAvailable } =
     req.body;
@@ -75,7 +76,7 @@ export const updateMovie = async (req, res) => {
 export const deleteMovie = async (req, res) => {
   const { id } = req.params;
 
-  const movie = await Movie.findByPk(id);
+export const deleteMovie = async (req, res) => {
 
   if (!movie)
     return res
