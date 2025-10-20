@@ -1,14 +1,11 @@
 import express from "express";
-
 import movieRoutes from "./routes/movie.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import ticketRoutes from "./routes/ticket.routes.js";
-import movieRoutes from './routes/movie.routes.js';
-import userRoutes from './routes/user.routes.js';
 import { sequelize } from "./db.js";
 import dotenv from "dotenv";
 import cors from "cors";
-import cors from "cors";
+
 
 import "./entities/Movie.js";
 dotenv.config();
@@ -34,6 +31,7 @@ try {
     
     app.use(movieRoutes);
     app.use(userRoutes);
+    app.use(ticketRoutes);
 
     await sequelize.sync();
 
