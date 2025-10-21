@@ -4,6 +4,7 @@ import Login from './components/auth/login/Login';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from './components/navBar/NavBar';
 import Home from "./pages/Home";
+import Releases from './pages/Releases';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/peliculas" element={<Dashboard />} />
+          <Route path="/estrenos" element={<Releases />} />
         </Routes>
       </div>
     </BrowserRouter>
