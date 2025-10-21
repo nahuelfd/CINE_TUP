@@ -1,46 +1,33 @@
-import { useState } from "react"
-import { Card, Badge, Button } from "react-bootstrap"
+import { Card, Badge } from "react-bootstrap"
+import { Link } from "react-router";
 
 
 const MovieItem = ({
+  id,
   title,
   category,
   duration,
   imageUrl,
   isAvailable
 }) => {
-  
-  const handleClick = () => {
-    console.log("Clicked!")
-    setNewTitle("Actualizar Titulo")
-  }
-  const [newTitle, setNewTitle] = useState(title);
-
-
   return (
-    
-     <div className="movie-item-wrapper">
-    <Card className="text-white border-0 shadow-sm movie-card">
-      <Card.Img 
-        src={imageUrl} 
-        alt={newTitle} 
-        className="movie-img"
-      />
-      <Card.ImgOverlay className="d-flex flex-column justify-content-end p-2">
-        {isAvailable && (
-          <Badge bg="danger" className="mb-2">{isAvailable ? 'Disponible' : 'No disponible'}</Badge>
+    <Link to={`/peliculas/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+     <Card className="movie-card h-100 shadow-sm">
+      <Card.Img variant="top" src={imageUrl} className="movie-img" />
+      <Card.Body>
+        <Card.Title className="movie-title">{title}</Card.Title>
+        <Card.Text className="movie-info">
+          {category} · {duration}
+        </Card.Text>
+        {isAvailable ? (
+          <Badge bg="success">Disponible</Badge>
+        ) : (
+          <Badge bg="secondary">No disponible</Badge>
         )}
-        <Card.Title className="fw-bold" style={{ fontSize: '1rem' }}>{newTitle}</Card.Title>
-        <Card.Text style={{ fontSize: '0.8rem' }}>{category} • {duration}</Card.Text>
-      </Card.ImgOverlay>
+      </Card.Body>
     </Card>
-    <Button 
-      variant="primary" 
-      className="mt-2"
-      onClick={handleClick}>
-        Cambiar titulo
-    </Button>
-    </div>
-  )}
+    </Link>
+  );
+};
 
 export default MovieItem

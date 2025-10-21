@@ -1,29 +1,20 @@
-import jwt from 'jsonwebtoken'
-
- 
+import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
+  const header = req.header("Authorization") || "";
 
-    const header = req.header("Authorization") || "";
+  const token = header.split(" ")[1];
 
-    const token = header.split(" ")[1];
+  if (!token)
+    return res.status(401).send({ message: "No posee autorización requerida" });
 
-    if (!token)
+  try {
+    const payload = jwt.verify(token, "Todopelis123");
 
-        return res.status(401).send({ message: "No posee autorización requerida" });
+    console.log(payload);
 
-    try {
-
-        const payload = jwt.verify(token, "programacion3-2025");
-
-        console.log(payload)
-
-        next();
-
-    } catch (error) {
-
-        return res.status(401).send({ message: "No posee permisos correctos" })
-
-    }
-
-}
+    next();
+  } catch (error) {
+    return res.status(401).send({ message: "No posee permisos correctos" });
+  }
+};

@@ -32,7 +32,7 @@ export const MOVIES = [
     imageUrl: "https://m.media-amazon.com/images/I/91kFYg4fX3L._SL1500_.jpg",
     duration: 169,
     language: "Español",
-    isAvailable: true,
+    isAvailable: false,
   }
 ];
 

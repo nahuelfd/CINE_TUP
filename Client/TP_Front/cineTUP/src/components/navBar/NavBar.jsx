@@ -1,6 +1,9 @@
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+
 
 const NavBar = () => {
+    
     return (
         <Navbar bg="dark" variant="dark" expand="lg" className="px-2">
             <Container fluid>
@@ -26,9 +29,10 @@ const NavBar = () => {
                     {/* Botón Login a la derecha */}
                     <div className="d-flex">
                         <Button
+                            as={Link} to="/login"
                             variant="outline-light"
                             className="fw-bold rounded-pill px-3"
-                            href="/login"
+                            
                         >
                             Iniciar Sesión
                         </Button>

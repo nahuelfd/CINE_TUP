@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap"
 import { useNavigate } from 'react-router';
-
 import { initialErrors } from './Login.data';
-
 import AuthContainer from "../authContainer/AuthContainer";
+import { AuthContext } from '../../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext';
+import useFetch from '../../../useFetch/useFetch';
 
 
 
@@ -13,9 +13,13 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState(initialErrors)
 
+    const { onLogin } = useContext(AuthContext)
+
     const navigate = useNavigate()
+    const { post } = useFetch()
     const emailRef = useRef(null)
     const passwordRef = useRef(null)
+    
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -58,21 +62,20 @@ const Login = () => {
         setErrors(initialErrors);
         setEmail('');
         setPassword('')
-        fetch("http://localhost:3000/login", {
-            headers: {
-                "Content-Type": "application/json",
+        post("/login", 
+            false, 
+            {
+            email,
+            password
             },
-            method: "POST",
-            body: JSON.stringify({
-                email,
-                password
-            })
-        })
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.log(err))
-        onLogin()
-        navigate('/library')
+            token => {
+                onLogin(token)
+                navigate('/peliculas')
+            },
+            err => errorToast(err.message)
+            )
+        
+      
     }
 
     const handleRegisterClick = () => {
@@ -82,6 +85,7 @@ const Login = () => {
 
     return (
         <AuthContainer>
+            
             <Form onSubmit={handleSubmit}>
                 <FormGroup className="mb-4">
                     <Form.Label>Email</Form.Label>
