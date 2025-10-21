@@ -4,8 +4,8 @@ import Login from './components/auth/login/Login';
 import MovieTickets from './components/library/movieTickets/MovieTickets';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from './components/navBar/NavBar';
-import Home from "./pages/Home";
-import Releases from './pages/Releases';
+import Home from './components/home/Home'
+import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
 
 function App() {

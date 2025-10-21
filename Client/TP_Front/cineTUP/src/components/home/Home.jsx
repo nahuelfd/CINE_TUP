@@ -1,31 +1,9 @@
-import MovieList from "../components/library/movieList/MovieList";
+import MovieList from "../library/movieList/MovieList";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { MOVIES } from '../../data/data'
 
 const Home = () => {
-  // Carrusel de anuncios
-  const adImages = [
-    "https://proxymedia.woopic.com/api/v1/images/331%2FINTERSTELLAW0089482_BAN1_2424_NEWTV_UHD.jpg",
-    "https://images5.alphacoders.com/114/1144756.jpg",
-    "https://wallpapers.com/images/hd/marlonbrando-poster-de-el-padrino-v288n2h2t3u85apc.jpg",
-  ];
-
-  // Proximos Estrenos
-  const upcomingReleases = [
-    {
-      title: "Dune: Parte 2",
-      releaseDate: "Noviembre 2025",
-      description: "La continuación épica del viaje de Paul Atreides en Arrakis.",
-      img: "https://posterspy.com/wp-content/uploads/2023/05/Dune-2-Poster-4x5-1.jpg",
-    },
-    {
-      title: "Joker 2",
-      releaseDate: "Diciembre 2025",
-      description: "Arthur Fleck regresa en una historia aún más oscura.",
-      img: "https://es.web.img3.acsta.net/img/e5/dc/e5dc6820bc894028db90f70bb8cd0057.jpg",
-    },
-  ];
-
   return (
     <div>
       {/* Carrusel anuncios*/}
@@ -38,11 +16,11 @@ const Home = () => {
             showThumbs={false}
             interval={4000}
           >
-            {adImages.map((src, index) => (
-              <div key={index}>
+            {MOVIES.map((movie) => (
+              <div key={movie.id}>
                 <img
-                  src={src}
-                  alt={`Advertisement ${index + 1}`}
+                  src={movie.imageBanner}
+                  alt={movie.title}
                   className="w-100"
                   style={{ height: "400px", objectFit: "cover" }}
                 />
@@ -55,10 +33,10 @@ const Home = () => {
       {/* Seccion peliculas en cartelera*/}
       <section style={{ backgroundColor: "#f5f5f5", padding: "2rem 0" }}>
         <h2 className="text-center fw-bold mb-4">EN CARTELERA</h2>
-        <MovieList maxMovies={5} />
+        <MovieList movies={ MOVIES } />
       </section>
 
-      {/* Seccion proximos estrenos*/}
+      {/* Seccion proximos estrenos
       <section style={{ backgroundColor: "#fff", padding: "2rem 0" }}>
         <h2 className="text-center fw-bold mb-5">PROXIMOS ESTRENOS</h2>
         <div className="container d-flex flex-column gap-4">
@@ -82,6 +60,7 @@ const Home = () => {
           ))}
         </div>
       </section>
+      */}
     </div>
   );
 };
