@@ -66,19 +66,19 @@ const Register = () => {
 
         setErrors({ name: false, email: false, password: false });
 
-        // Validar nombre
+        // name validation
         if (!name || !validateString(name, 3)) {
             setErrors(prev => ({ ...prev, name: true }));
             return;
         }
 
-       // Validar email
+       // email validation
         if (!email || !validateEmail(email)) {
             setErrors(prev => ({ ...prev, email: true }));
             return;
         }
 
-        // Validar contraseña
+        // password validation
         if (!password || !validatePassword(password, 7, 20, true, true)) {
             setErrors(prev => ({ ...prev, password: true }));
             return;
@@ -100,7 +100,6 @@ const Register = () => {
                 const data = await res.json();
 
                 if (!res.ok) {
-                // Si el backend devuelve un 400 o 401, mostramos el mensaje de error
                     throw new Error(data.message || "Error en el registro");
                 }
             

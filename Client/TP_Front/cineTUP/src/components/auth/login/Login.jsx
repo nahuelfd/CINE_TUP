@@ -42,6 +42,16 @@ const Login = () => {
         }))
     }
 
+    const handleEmailBlur = () => {
+        if (!email) {
+            setErrors(prev => ({ ...prev, email: "El email no puede estar vacío" }));
+        } else if (!validateEmail(email)) {
+            setErrors(prev => ({ ...prev, email: "Ingrese un email válido" }));
+        } else {
+            setErrors(prev => ({ ...prev, email: false }));
+        }
+    }
+
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
         setErrors(prevErrors => ({
@@ -112,8 +122,10 @@ const Login = () => {
                         placeholder="Ingresar email"
                         className={errors.email && "border border-danger"}
                         value={email}
-                        onChange={handleEmailChange} />
-                    {errors.email && <p className="text-danger">¡El email es campo obligatorio!</p>}
+                        onChange={handleEmailChange} 
+                        onBlur={handleEmailBlur} 
+                    />
+                    {errors.email && <p className="text-danger">{errors.email}</p>}
                 </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Label>Contraseña</Form.Label>
