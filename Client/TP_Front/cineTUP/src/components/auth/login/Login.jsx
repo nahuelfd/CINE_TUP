@@ -5,8 +5,21 @@ import { initialErrors } from './Login.data';
 import AuthContainer from "../authContainer/AuthContainer";
 import { AuthContext } from '../../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext';
 import useFetch from '../../../useFetch/useFetch';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { validateEmail, validatePassword } from '../../../../../../../Server/Cine_Tup_Server/src/utils/validations';
 
-
+const errorToast = (msg) => {
+    toast.error(msg, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+};
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -29,6 +42,16 @@ const Login = () => {
         }))
     }
 
+    const handleEmailBlur = () => {
+        if (!email) {
+            setErrors(prev => ({ ...prev, email: "El email no puede estar vacío" }));
+        } else if (!validateEmail(email)) {
+            setErrors(prev => ({ ...prev, email: "Ingrese un email válido" }));
+        } else {
+            setErrors(prev => ({ ...prev, email: false }));
+        }
+    }
+
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
         setErrors(prevErrors => ({
@@ -45,7 +68,7 @@ const Login = () => {
                 ...prevErrors,
                 email: true
             }))
-            emailRef.current.focus();
+            emailRef.current?.focus();
 
             return;
         }
@@ -55,24 +78,27 @@ const Login = () => {
                 ...prevErrors,
                 password: true
             }))
-            passwordRef.current.focus();
+            passwordRef.current?.focus();
             return;
         }
 
+       
+
         setErrors(initialErrors);
-        setEmail('');
-        setPassword('')
+        
         post("/login", 
             false, 
             {
-            email,
-            password
+                email,
+                password
             },
             token => {
                 onLogin(token)
+                setEmail('');
+                setPassword('')
                 navigate('/peliculas')
             },
-            err => errorToast(err.message)
+            err => errorToast(err.message || "Error al iniciar sesión")
             )
         
       
@@ -96,8 +122,10 @@ const Login = () => {
                         placeholder="Ingresar email"
                         className={errors.email && "border border-danger"}
                         value={email}
-                        onChange={handleEmailChange} />
-                    {errors.email && <p className="text-danger">¡El email es campo obligatorio!</p>}
+                        onChange={handleEmailChange} 
+                        onBlur={handleEmailBlur} 
+                    />
+                    {errors.email && <p className="text-danger">{errors.email}</p>}
                 </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Label>Contraseña</Form.Label>
@@ -125,6 +153,7 @@ const Login = () => {
                     <Button onClick={handleRegisterClick}>Registrarse</Button>
                 </Row>
             </Form>
+            <ToastContainer />
         </AuthContainer>
 
     )
