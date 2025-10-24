@@ -1,15 +1,10 @@
-.app-container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
 /*Cards Peliculas*/
 .movie-card {
   border-radius: 12px;
   overflow: hidden;
-  background-color: #f8f9fa;
+  background-color: var(--card-bg);
   transition: transform 0.2s, box-shadow 0.2s;
+  color: var(--text);
 }
 
 .movie-card:hover {
@@ -26,22 +21,11 @@
   font-weight: 600;
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
+  color: var(--text);
 }
 
 .movie-info {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--muted);
   margin-bottom: 0.5rem;
 }
-
-/*Cards Peliculas*/
-
-.title-page {
-  color: #fff;
-  font-weight: 700;
-  text-decoration: underline;
-  text-decoration-color: #070707ff;
-  text-underline-offset: 5px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 1);
-}
-

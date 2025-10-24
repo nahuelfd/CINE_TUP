@@ -1,46 +1,76 @@
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
-import { Link } from "react-router";
-
+import { Link } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
 
 const NavBar = () => {
-    
-    return (
-        <Navbar bg="dark" variant="dark" expand="lg" className="px-2">
-            <Container fluid>
-                {/* Logo / Brand */}
-                <Navbar.Brand href="/" className="fw-bold text-white fs-2">
-                    CINETUP
-                </Navbar.Brand>
+  const { theme, toggleTheme } = useTheme();
 
-                {/* Botón hamburguesa móvil */}
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+  return (
+    <Navbar
+      expand="lg"
+      className="px-2 navbar-theme"
+      bg={theme === "dark" ? "dark" : "light"}
+      variant={theme === "dark" ? "dark" : "light"}
+    >
+      <Container fluid>
+        {/* Logo */}
+        <Navbar.Brand
+          as={Link}
+          to="/"
+          className="fw-bold fs-2"
+          style={{ color: "var(--nav-text)" }}
+        >
+          CINETUP
+        </Navbar.Brand>
 
-                {/* Links + Login*/}
-                <Navbar.Collapse id="basic-navbar-nav">
-                    {/* Links centrados */}
-                    <Nav className="mx-auto text-center">
-                        <Nav.Link href="/peliculas" className="fw-bold text-white fs-5 mx-3">
-                            PELÍCULAS
-                        </Nav.Link>
-                        <Nav.Link href="/estrenos" className="fw-bold text-white fs-5 mx-4">
-                            PRÓXIMOS ESTRENOS
-                        </Nav.Link>
-                    </Nav>
-                    {/* Botón Login a la derecha */}
-                    <div className="d-flex">
-                        <Button
-                            as={Link} to="/login"
-                            variant="outline-light"
-                            className="fw-bold rounded-pill px-3"
-                            
-                        >
-                            Iniciar Sesión
-                        </Button>
-                    </div>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
-    );
+        {/* Botón hamburguesa móvil */}
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+
+        {/* Links */}
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mx-auto text-center">
+            <Nav.Link
+              as={Link}
+              to="/peliculas"
+              className="fw-bold fs-5 mx-3"
+              style={{ color: "var(--nav-text)" }}
+            >
+              PELÍCULAS
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/estrenos"
+              className="fw-bold fs-5 mx-4"
+              style={{ color: "var(--nav-text)" }}
+            >
+              PRÓXIMOS ESTRENOS
+            </Nav.Link>
+          </Nav>
+
+          {/* Botones a la derecha */}
+          <div className="d-flex gap-2 align-items-center">
+            <Button
+              as={Link}
+              to="/login"
+              variant={theme === "dark" ? "outline-light" : "outline-dark"}
+              className="fw-bold rounded-pill px-3"
+            >
+              Iniciar Sesión
+            </Button>
+
+            {/* Botón de toggle de tema */}
+            <Button
+              onClick={toggleTheme}
+              variant={theme === "dark" ? "outline-light" : "outline-dark"}
+              className="fw-bold rounded-pill px-3"
+            >
+              {theme === "dark" ? "☀️ Claro" : "🌙 Oscuro"}
+            </Button>
+          </div>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
 };
 
 export default NavBar;
