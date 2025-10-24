@@ -5,8 +5,21 @@ import { initialErrors } from './Login.data';
 import AuthContainer from "../authContainer/AuthContainer";
 import { AuthContext } from '../../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext';
 import useFetch from '../../../useFetch/useFetch';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { validateEmail, validatePassword } from '../../../../../../../Server/Cine_Tup_Server/src/utils/validations';
 
-
+const errorToast = (msg) => {
+    toast.error(msg, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+};
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -45,7 +58,7 @@ const Login = () => {
                 ...prevErrors,
                 email: true
             }))
-            emailRef.current.focus();
+            emailRef.current?.focus();
 
             return;
         }
@@ -55,24 +68,27 @@ const Login = () => {
                 ...prevErrors,
                 password: true
             }))
-            passwordRef.current.focus();
+            passwordRef.current?.focus();
             return;
         }
 
+       
+
         setErrors(initialErrors);
-        setEmail('');
-        setPassword('')
+        
         post("/login", 
             false, 
             {
-            email,
-            password
+                email,
+                password
             },
             token => {
                 onLogin(token)
+                setEmail('');
+                setPassword('')
                 navigate('/peliculas')
             },
-            err => errorToast(err.message)
+            err => errorToast(err.message || "Error al iniciar sesión")
             )
         
       
@@ -125,6 +141,7 @@ const Login = () => {
                     <Button onClick={handleRegisterClick}>Registrarse</Button>
                 </Row>
             </Form>
+            <ToastContainer />
         </AuthContainer>
 
     )
