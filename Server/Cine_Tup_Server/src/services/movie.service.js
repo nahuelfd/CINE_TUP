@@ -21,7 +21,7 @@ export const findMovie = async (req, res) => {
 };
 
 export const createMovie = async (req, res) => {
-  const { title, director, category, summary, imageUrl, duration, lenguage, isAvailable } = req.body;
+  const { title, director, category, summary, imageUrl, duration, language, isAvailable } = req.body;
 
   if (!title || !director)
     return res
@@ -35,17 +35,17 @@ export const createMovie = async (req, res) => {
     summary, 
     imageUrl, 
     duration,
-    lenguage,
+    language,
     isAvailable
   });
 
-  res.json(newmovie);
+  res.json(newMovie);
 };
 
 export const updateMovie = async (req, res) => {
   const { id } = req.params;
 
-  const { title, director, category, summary, imageUrl, duration, lenguage, isAvailable } =
+  const { title, director, category, summary, imageUrl, duration, language, isAvailable } =
     req.body;
 
 
@@ -63,7 +63,7 @@ export const updateMovie = async (req, res) => {
     summary, 
     imageUrl, 
     duration,
-    lenguage,
+    language,
     isAvailable
   });
 

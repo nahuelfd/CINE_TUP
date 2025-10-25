@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+/*import { useEffect, useState } from "react";
 import AddMovie from "./AddMovie";
 import './movie.css';
 
@@ -10,7 +9,7 @@ const Movie = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/movies");
+        const response = await fetch.get("http://localhost:3000/movies");
         setMovies(response.data);
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -56,4 +55,4 @@ const Movie = () => {
   );
 };
 
-export default Movie;
+export default Movie; */
