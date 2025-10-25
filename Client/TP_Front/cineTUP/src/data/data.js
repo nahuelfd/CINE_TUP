@@ -1,4 +1,5 @@
 // Almcanenamiento de las peliculas disponibles
+import { generateTickets } from "./tickets";
 
 export const MOVIES = [
   {
@@ -12,6 +13,7 @@ export const MOVIES = [
     duration: 148,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
     id: 2,
@@ -24,6 +26,7 @@ export const MOVIES = [
     duration: 136,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
     id: 3,
@@ -144,6 +147,7 @@ export const MOVIES = [
     duration: 118,
     language: "Español",
     isAvailable: false,
+    tickets: generateTickets(),
   }
 ];
 
