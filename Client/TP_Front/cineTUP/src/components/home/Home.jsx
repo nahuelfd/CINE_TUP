@@ -1,4 +1,5 @@
 import MovieList from "../library/movieList/MovieList";
+import ReleasesList from "../releases/ReleasesList";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { MOVIES } from '../../data/data'
@@ -9,7 +10,7 @@ const Home = () => {
   return (
     <div>
       {/* Carrusel anuncios*/}
-      <section className="bg-dark">
+      <section className="">
         <div className="max-w-6xl mx-auto rounded-3 overflow-hidden">
           <Carousel
             autoPlay
@@ -32,38 +33,17 @@ const Home = () => {
         </div>
       </section>
 
-      <section style={{ backgroundColor: "#f5f5f5", padding: "2rem 0" }}>
-        <h2 className="text-center fw-bold mb-4">EN CARTELERA</h2>
+      {/* Seccion peliculas en cartelera */}
+      <section style={{padding: "2rem 0" }}>
+        <h2 className="text-center fw-bold mb-5">EN CARTELERA</h2>
         <MovieList movies={ MOVIES } />
       </section>
 
-      <section style={{ backgroundColor: "#fff", padding: "2rem 0" }}>
-        <h2 className="text-center fw-bold mb-5">PROXIMOS ESTRENOS</h2>
-        <div className="container d-flex flex-column gap-4">
-
-
-
-          {upcomingMovies.map((movie, id) => (
-            <div
-              key={movie.id}
-              className="d-flex flex-column flex-md-row align-items-center bg-light rounded-4 shadow-sm overflow-hidden"
-            >
-              <img
-                src={movie.imageUrl}
-                alt={movie.title}
-                className="w-100 w-md-25"
-                style={{ maxWidth: "300px", height: "auto", objectFit: "cover" }}
-              />
-              <div className="p-4">
-                <h3 className="fw-bold">{movie.title}</h3>
-                <p>{movie.summary}</p>
-                <p className="text-muted mb-1">{movie.duration}mins</p>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Seccion proximos estrenos */}
+      <section style={{ backgroundColor: "var(--card-bg)", padding: "2rem 0" }}>
+        <h2 className="text-center fw-bold mb-4">PRÓXIMOS ESTRENOS</h2>
+        <ReleasesList movies={MOVIES} />
       </section>
-
     </div>
   );
 };

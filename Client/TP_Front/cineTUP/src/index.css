@@ -5,7 +5,14 @@
   --navbar-bg: #ffffff;
   --navbar-text-color: #111;
   --navbar-border: #ddd;
+  --section-bg: #ffffff;
   --section-title-color: #111;
+  --card-bg: #ffffff;
+  --text: #111;
+  --muted: #555;
+  --input-bg: #ffffff;
+  --input-border: #ccc;
+  --input-text: #111;
 }
 
 /* TEMA OSCURO */
@@ -13,22 +20,54 @@
   --bg-color: #121212;
   --text-color: #f5f5f5;
   --navbar-bg: #1f1f1f;
-  --navbar-text-color: #ffffff; /* 👈 clave para que el texto se lea */
+  --navbar-text-color: #ffffff;
   --navbar-border: #333;
+  --section-bg: #1a1a1a;
   --section-title-color: #ffffff;
+  --card-bg: #1e1e1e;
+  --text: #f5f5f5;
+  --muted: #aaa;
+  --input-bg: #2a2a2a;
+  --input-border: #444;
+  --input-text: #f5f5f5;
 }
 
+
 /* Estilos globales */
-body {
+html,
+body,
+#root,
+.App {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
+  font-family: "Inter", system-ui, sans-serif;
   transition: background-color 0.4s ease, color 0.4s ease;
 }
+
+.dashboard-page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Contenedores Bootstrap */
+.container,
+.container-fluid,
+main {
+  background-color: transparent;
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 
 /* NavBar */
 .navbar {
   background-color: var(--navbar-bg);
   border-bottom: 1px solid var(--navbar-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
@@ -40,7 +79,13 @@ body {
 }
 
 .navbar .nav-link:hover {
-  color: #ffd54f !important; /* dorado suave, opcional */
+  color: #ffd54f !important;
+}
+
+section {
+  background-color: var(--section-bg);
+  padding: 2rem 0;
+  transition: background-color 0.4s ease;
 }
 
 /* Título de sección (EN CARTELERA, etc.) */
@@ -50,6 +95,33 @@ body {
   text-transform: uppercase;
   text-align: center;
   margin-top: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
   transition: color 0.4s ease;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.form-control::placeholder {
+  color: var(--muted);
+}
+
+.form-control:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #ffd54f;
+  box-shadow: 0 0 4px rgba(255, 213, 79, 0.3);
+}
+
+.App {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.4s ease, color 0.4s ease;
 }

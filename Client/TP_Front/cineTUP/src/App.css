@@ -1,26 +1,26 @@
-/*Cards Peliculas*/
 .movie-card {
   border-radius: 12px;
   overflow: hidden;
   background-color: var(--card-bg);
-  transition: transform 0.2s, box-shadow 0.2s;
   color: var(--text);
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, color 0.3s ease;
 }
 
 .movie-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 .movie-img {
-  height: 300px;
+  height: 320px;
   object-fit: cover;
+  width: 100%;
 }
 
 .movie-title {
   font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.4rem;
   color: var(--text);
 }
 
@@ -28,4 +28,53 @@
   font-size: 0.9rem;
   color: var(--muted);
   margin-bottom: 0.5rem;
+}
+
+.movie-card-body {
+  padding: 1rem;
+  text-align: center;
+}
+
+.carousel-section {
+  background-color: var(--navbar-bg);
+  padding: 0;
+  margin: 0;
+}
+
+.carousel-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 21 / 9;
+  background-color: #000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.movie-release-card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s ease;
+}
+
+.movie-release-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.release-img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  object-fit: cover;
 }

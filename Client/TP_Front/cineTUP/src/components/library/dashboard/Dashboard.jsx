@@ -5,13 +5,8 @@ import { useState } from "react"
 const Dashboard = () => {
   const [movies, setMovies] = useState(MOVIES)
   return (
-    <div>
-      <h1
-        className="title-page text-start mt-4 mb-4 fw-bold text-light"
-      >
-        PELÍCULAS EN CARTELERA
-      </h1>
-
+    <div className="dashboard-page">
+      <h1 className="fw-bold text-center  mt-4">PELÍCULAS EN CARTELERA</h1>
       <MovieList movies={movies} />
     </div>
   )
