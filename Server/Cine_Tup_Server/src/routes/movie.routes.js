@@ -1,23 +1,22 @@
 import { Router } from "express";
-
-import { createMovie, deleteMovie, findMovie, findMovies, updateMovie } from "../services/movie.service.js";
-
-import { verifyToken } from "../utils/auth.js";
-
- 
+import {
+  createTicket,
+  deleteTicket,
+  findTicket,
+  findTickets,
+  updateTicket,
+} from "../services/ticket.service.js";
+import { verifyToken, isAdmin, isSysAdmin, isUsuario } from "../utils/auth.js";
 
 const router = Router();
 
-router.get("/movie", verifyToken, findMovies);
+router.get("/ticket", verifyToken, isUsuario, findTickets);
+router.get("/ticket/:id", verifyToken, isUsuario, findTicket);
 
-router.get("/movie/:id", verifyToken, findMovie);
+router.post("/ticket", verifyToken, isUsuario, createTicket);
 
-router.post("/movie", verifyToken, createMovie);
+router.put("/ticket/:id", verifyToken, isAdmin, updateTicket);
 
-router.put("/movie/:id",verifyToken,  updateMovie);
-
-router.delete("/movie/:id",verifyToken,  deleteMovie);
-
- 
+router.delete("/ticket/:id", verifyToken, isSysAdmin, deleteTicket);
 
 export default router;

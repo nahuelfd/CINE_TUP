@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Card, Col, Form, Row, Button } from "react-bootstrap";
-import { errorToast } from "../../shared/notifications/notification";
+// import { errorToast } from "../../shared/notifications/notification";
 
 const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [title, setTitle] = useState(movie?.title || "");
@@ -18,11 +18,11 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!title || !director) {
+   /* if (!title || !director) {
       errorToast("El título y/o director son requeridos.");
       return;
     }
-
+*/
     const newMovie = {
       title,
       director,
@@ -51,7 +51,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
 
       const data = await res.json();
       console.log(isEditing ? "Película editada:" : "Película creada:", data);
-      onMovieAdded(); // refresca la lista
+      onMovieAdded(data); // refresca la lista
       if (!isEditing) {
         setTitle(""); setDirector(""); setCategory(""); setSummary("");
         setImageUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);

@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import AddMovie from "./AddMovie";
 import './movie.css';
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
 
-
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/movies");
+        const token = localStorage.getItem("cine-tup-token");
+        const response = await fetch.get("http://localhost:3000/movies",{
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
         setMovies(response.data);
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -56,4 +59,4 @@ const Movie = () => {
   );
 };
 
-export default Movie;
+export default Movie; 
