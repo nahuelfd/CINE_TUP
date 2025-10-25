@@ -10,8 +10,8 @@ const MovieList = ({ movies }) => {
     return <p className="text-center mt-4">No hay películas disponibles.</p>;
   }
   let availableMovies = movies.filter(movie => movie.isAvailable)
-  if (categoryFilter) {
-    availableMovies = availableMovies.filter(movie => movie.category.toLowerCase() === categoryFilter.toLowerCase())
+  if (searchTerm) {
+    availableMovies = availableMovies.filter(movie =>  movie.title.toLowerCase().includes(searchTerm.toLowerCase()))
   }
  if (durationOrder) {
   if (durationOrder === "asc") {
