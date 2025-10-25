@@ -39,6 +39,7 @@ export const MOVIES = [
     duration: 169,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
     id: 4,
@@ -51,6 +52,7 @@ export const MOVIES = [
     duration: 180,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
   id: 5,
@@ -63,6 +65,7 @@ export const MOVIES = [
     duration: 150,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
   id: 6,
@@ -75,6 +78,7 @@ export const MOVIES = [
     duration: 106,
     language: "Español",
     isAvailable: false,
+    tickets: generateTickets(),
   },
   {
   id: 7,
@@ -87,6 +91,7 @@ export const MOVIES = [
     duration: 85,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
   id: 8,
@@ -99,6 +104,7 @@ export const MOVIES = [
     duration: 108,
     language: "Español",
     isAvailable: false,
+    tickets: generateTickets(),
   },
   {
   id: 9,
@@ -111,6 +117,7 @@ export const MOVIES = [
     duration: 98,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
   id: 10,
@@ -123,6 +130,7 @@ export const MOVIES = [
     duration: 102,
     language: "Español",
     isAvailable: false,
+    tickets: generateTickets(),
   },
   {
   id: 11,
@@ -135,6 +143,7 @@ export const MOVIES = [
     duration: 118,
     language: "Español",
     isAvailable: true,
+    tickets: generateTickets(),
   },
   {
   id: 12,
