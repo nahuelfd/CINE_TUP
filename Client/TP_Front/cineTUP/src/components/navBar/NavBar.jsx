@@ -1,9 +1,22 @@
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
+import { useContext } from "react";
+import { AuthContext } from "../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext";
 
 const NavBar = () => {
   const { theme, toggleTheme } = useTheme();
+  const { token, onLogout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
+  const handleLogoutClick = () => {
+    onLogout();
+    navigate("/login");
+  };
 
   return (
     <Navbar
@@ -13,7 +26,6 @@ const NavBar = () => {
       variant={theme === "dark" ? "dark" : "light"}
     >
       <Container fluid>
-        {/* Logo */}
         <Navbar.Brand
           as={Link}
           to="/"
@@ -23,10 +35,8 @@ const NavBar = () => {
           CINETUP
         </Navbar.Brand>
 
-        {/* Botón hamburguesa móvil */}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-        {/* Links */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto text-center">
             <Nav.Link
@@ -47,18 +57,35 @@ const NavBar = () => {
             </Nav.Link>
           </Nav>
 
-          {/* Botones a la derecha */}
           <div className="d-flex gap-2 align-items-center">
-            <Button
-              as={Link}
-              to="/login"
-              variant={theme === "dark" ? "outline-light" : "outline-dark"}
-              className="fw-bold rounded-pill px-3"
-            >
-              Iniciar Sesión
-            </Button>
+            {!token ? (
+              <Button
+                as={Link}
+                to="/login"
+                variant={theme === "dark" ? "outline-light" : "outline-dark"}
+                className="fw-bold rounded-pill px-3"
+              >
+                Iniciar Sesión
+              </Button>
+            ) : (
+              <>
+                <Button
+                  onClick={handleProfileClick}
+                  variant={theme === "dark" ? "outline-light" : "outline-dark"}
+                  className="fw-bold rounded-pill px-3"
+                >
+                  👤 Perfil
+                </Button>
+                <Button
+                  onClick={handleLogoutClick}
+                  variant={theme === "dark" ? "outline-light" : "outline-dark"}
+                  className="fw-bold rounded-pill px-3"
+                >
+                  Cerrar Sesión
+                </Button>
+              </>
+            )}
 
-            {/* Botón de toggle de tema */}
             <Button
               onClick={toggleTheme}
               variant={theme === "dark" ? "outline-light" : "outline-dark"}
