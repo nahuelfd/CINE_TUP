@@ -14,29 +14,42 @@ export const findTicket = async (req, res) => {
   const ticket = await Ticket.findByPk(id, { include: [Movie, User] });
 
   if (!ticket)
-    return res
-      .status(ERROR_CODE.NOT_FOUND)
-      .send({ message: "Ticket no encontrado" });
+    return res.status(ERROR_CODE.NOT_FOUND).json({ message: "Ticket no encontrado" });
 
   res.json(ticket);
 };
 
 export const createTicket = async (req, res) => {
-  const { seatNumber, price, movieId, userId } = req.body;
+  try {
+    const { seatNumber, price, movieId } = req.body;
+    const userId = req.user.id;
 
-  if (!seatNumber || !price || !movieId || !userId)
-    return res
-      .status(ERROR_CODE.BAD_REQUEST)
-      .send({ message: "Campos requeridos faltantes" });
+    if (!seatNumber || !price || !movieId || !userId) {
+      return res.status(ERROR_CODE.BAD_REQUEST)
+        .json({ message: "Campos requeridos faltantes" });
+    }
 
-  const newTicket = await Ticket.create({
-    seatNumber,
-    price,
-    movieId,
-    userId,
-  });
+    const existingTicket = await Ticket.findOne({
+      where: { movieId, seatNumber }
+    });
 
-  res.json(newTicket);
+    if (existingTicket) {
+      return res.status(400).json({ message: "El asiento ya está ocupado" });
+    }
+
+    const newTicket = await Ticket.create({
+      seatNumber,
+      price,
+      movieId,
+      userId,
+      isAvailable: false
+    });
+
+    res.status(201).json(newTicket);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al crear el ticket" });
+  }
 };
 
 export const updateTicket = async (req, res) => {
@@ -46,9 +59,7 @@ export const updateTicket = async (req, res) => {
   const ticket = await Ticket.findByPk(id);
 
   if (!ticket)
-    return res
-      .status(ERROR_CODE.NOT_FOUND)
-      .send({ message: "Ticket no encontrado" });
+    return res.status(ERROR_CODE.NOT_FOUND).json({ message: "Ticket no encontrado" });
 
   await ticket.update({ seatNumber, price });
   await ticket.save();
@@ -62,11 +73,20 @@ export const deleteTicket = async (req, res) => {
   const ticket = await Ticket.findByPk(id);
 
   if (!ticket)
-    return res
-      .status(ERROR_CODE.NOT_FOUND)
-      .send({ message: "Ticket no encontrado" });
+    return res.status(ERROR_CODE.NOT_FOUND).json({ message: "Ticket no encontrado" });
 
   await ticket.destroy();
 
-  res.send(`Borrando ticket con ID ${id}`);
+  res.json({ message: `Ticket con ID ${id} eliminado` });
+};
+
+export const findTicketsByMovie = async (req, res) => {
+  try {
+    const movieId = parseInt(req.params.id);
+    const tickets = await Ticket.findAll({ where: { movieId } });
+    res.json(tickets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los tickets" });
+  }
 };
