@@ -2,16 +2,16 @@ import { useState } from "react";
 import { AuthContext } from "./AuthContext";
 
 const AuthContextProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('cinetup-token') || null);
+  const [token, setToken] = useState(localStorage.getItem('cine-tup-token') || null);
 
   const handleLogin = (newToken) => {
     setToken(newToken);
-    localStorage.setItem('cinetup-token', newToken);
+    localStorage.setItem('cine-tup-token', newToken);
   };
 
   const handleLogout = () => {
     setToken(null);
-    localStorage.removeItem('cinetup-token');
+    localStorage.removeItem('cine-tup-token');
   };
 
   return (

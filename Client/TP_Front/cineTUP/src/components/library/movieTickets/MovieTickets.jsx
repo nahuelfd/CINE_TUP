@@ -9,7 +9,7 @@ const MovieTickets = () => {
   const [selectedTickets, setSelectedTickets] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const token = localStorage.getItem("cinetup-token");
+  const token = localStorage.getItem("cine-tup-token");
   const userId = localStorage.getItem("userId");
 
   // Trae tickets desde la BD al cargar la página
