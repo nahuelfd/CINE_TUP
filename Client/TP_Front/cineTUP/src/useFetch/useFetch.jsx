@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { AuthContext } from '../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext';
+import { AuthContext } from "../context/AuthContext";
 
 
 const baseUrl = import.meta.env.VITE_APP_API_URL;
-
+console.log("Base URL usada por useFetch:", baseUrl)
 const useFetch = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { token } = useContext(AuthContext);

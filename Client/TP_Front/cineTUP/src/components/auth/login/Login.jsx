@@ -1,13 +1,13 @@
 import { useContext, useRef, useState } from 'react';
-import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
+import { Button, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { useNavigate } from 'react-router';
 import { initialErrors } from './Login.data';
-import AuthContainer from "../authContainer/AuthContainer";
-import { AuthContext } from '../../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext';
+import AuthContainer from '../authContainer/AuthContainer';
+import { AuthContext } from "../../../context/AuthContext";
 import useFetch from '../../../useFetch/useFetch';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { validateEmail } from '../../../../../../../Server/Cine_Tup_Server/src/utils/validations';
+import { validateEmail } from '../../../utils/validation'; // Ajusta según tu estructura
 
 const errorToast = (msg) => {
   toast.error(msg, {
@@ -31,6 +31,10 @@ const Login = () => {
   const { post } = useFetch();
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+
+  const handleRegisterClick = () => {
+    navigate("/register");
+  };
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -74,14 +78,14 @@ const Login = () => {
       "/users/login",
       false,
       { email, password },
-      (data) => { 
-
+      (data) => {
         const token = data?.token;
         if (!token) {
           return errorToast("Token no recibido del servidor");
         }
 
         localStorage.setItem("cine-tup-token", token);
+        localStorage.setItem("userId", data.user.id);
         onLogin(token);
 
         setEmail('');
@@ -90,10 +94,6 @@ const Login = () => {
       },
       (err) => errorToast(err.message || "Error al iniciar sesión")
     );
-  };
-
-  const handleRegisterClick = () => {
-    navigate("/register");
   };
 
   return (

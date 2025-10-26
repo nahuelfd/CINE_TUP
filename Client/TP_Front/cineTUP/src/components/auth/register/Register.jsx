@@ -86,7 +86,7 @@ const Register = () => {
         }
 
 
-        fetch("http://localhost:3000/users/register", {
+        fetch("http://localhost:3000/api/users/register", {
             headers: {
                 "Content-Type": "application/json",
             },

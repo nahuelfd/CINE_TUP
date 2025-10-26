@@ -1,4 +1,3 @@
-
 export const generateTickets = () => {
   const rows = ["A", "B", "C", "D", "E", "F", "G"];
   const tickets = [];
