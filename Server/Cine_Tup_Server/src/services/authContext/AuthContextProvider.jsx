@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { AuthContext } from "./AuthContext";
 
-const tokenValue = localStorage.getItem('cine - token');
+
 
 const AuthContextProvider = ({ children }) => {
-    const [token, setToken] = useState(tokenValue);
+    const [token, setToken] = useState(() => localStorage.getItem('cinetup-token'));
 
     const handleLogin = (token) => {
         setToken(token);
@@ -18,14 +18,14 @@ const AuthContextProvider = ({ children }) => {
 
 
     return (
-        <AuthContext
+        <AuthContext.Provider
             value={{
                 token,
                 onLogin: handleLogin,
                 onLogout: handleLogout
             }}>
             {children}
-        </AuthContext>
+        </AuthContext.Provider>
     )
 }
 
