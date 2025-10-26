@@ -3,7 +3,7 @@ import { Button, Col, Form, FormGroup, Row } from "react-bootstrap"
 import { useNavigate } from 'react-router';
 import { initialErrors } from './Login.data';
 import AuthContainer from "../authContainer/AuthContainer";
-import { AuthContext } from '../../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext';
+import { AuthContext } from "../../../context/AuthContext";
 import useFetch from '../../../useFetch/useFetch';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -92,12 +92,16 @@ const Login = () => {
                 email,
                 password
             },
-            token => {
-                onLogin(token)
-                setEmail('');
-                setPassword('')
-                navigate('/peliculas')
-            },
+        response => {
+            const { token, user } = response;
+
+            onLogin(token);
+            localStorage.setItem("userId", user.id);
+
+            setEmail('');
+            setPassword('');
+            navigate('/peliculas');
+        },
             err => errorToast(err.message || "Error al iniciar sesión")
             )
         
