@@ -38,6 +38,10 @@ const Dashboard = () => {
     await fetchMovies();
   };
 
+  const handleMovieDeleted = async () => {
+    await fetchMovies();
+  };
+
   const isLoggedIn = !!localStorage.getItem("cine-tup-token");
 
   return (
@@ -45,7 +49,7 @@ const Dashboard = () => {
       {isLoggedIn && <AddMovie onMovieAdded={handleMovieAdded} />}
 
       <h1 className="fw-bold text-center mt-4">PELÍCULAS EN CARTELERA</h1>
-      <MovieList movies={movies} />
+      <MovieList movies={movies} onMovieDeleted={handleMovieDeleted}/>
     </div>
   );
 };
