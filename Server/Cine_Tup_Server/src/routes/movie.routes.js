@@ -7,10 +7,10 @@ import { verifyToken } from "../utils/auth.js";
 const router = Router();
 
 router.get("/movies", findMovies);
-router.get("/movie/:id", findMovie);
+router.get("/movies/:id", findMovie);
 router.post("/movies", verifyToken, createMovie);
-router.put("/movie/:id",verifyToken,  updateMovie);
-router.delete("/movie/:id",verifyToken,  deleteMovie);
+router.put("/movies/:id",verifyToken,  updateMovie);
+router.delete("/movies/:id",  deleteMovie);
 
  
 

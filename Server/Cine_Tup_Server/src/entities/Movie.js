@@ -24,7 +24,9 @@ export const Movie = sequelize.define("movie", {
     imageUrl: {
         type: DataTypes.STRING,
     },
-
+    bannerUrl: {
+        type: DataTypes.STRING,
+    },
     duration: {
         type: DataTypes.INTEGER,
     },
@@ -35,6 +37,6 @@ export const Movie = sequelize.define("movie", {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     }
-
+    
 
 }, { timestamps: false })

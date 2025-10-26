@@ -2,7 +2,7 @@ import { useState } from "react";
 import MovieItem from "../movieItem/MovieItem"
 import { Container, Row, Col, Form } from "react-bootstrap"
 
-const MovieList = ({ movies }) => {
+const MovieList = ({ movies, onMovieDeleted }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
   const [durationOrder, setDurationOrder] = useState('')
@@ -24,6 +24,25 @@ const MovieList = ({ movies }) => {
     availableMovies = availableMovies.filter(movie => movie.category.toLowerCase() === categoryFilter.toLowerCase())
   }
   const uniqueCategories = [...new Set(movies.map(movie => movie.category))]
+const handleDeleteMovie = async (id) =>{
+  try {
+      const token = localStorage.getItem("cine-tup-token");
+      const res = await fetch(`http://localhost:3000/movies/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Error al eliminar la película");
+
+      onMovieDeleted();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo eliminar la película");
+    }
+  };
+
   return (
     <Container className="mt-4">
       <Form className="mb-4">
@@ -75,6 +94,7 @@ const MovieList = ({ movies }) => {
                 duration={`${movie.duration} min`}
                 imageUrl={movie.imageUrl}
                 isAvailable={movie.isAvailable}
+                onDelete={handleDeleteMovie}
               />
             </Col>
           ))}

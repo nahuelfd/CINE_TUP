@@ -50,7 +50,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       onMovieAdded(); // refresca la lista
       if (!isEditing) {
         setTitle(""); setDirector(""); setCategory(""); setSummary("");
-        setImageUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
+        setImageUrl("");setBannerURL(""); setDuration(""); setLanguage(""); setIsAvailable(false);
       }
     } catch (err) {
       console.error("Error creando/actualizando película:", err);
