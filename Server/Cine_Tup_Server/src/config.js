@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 export const config = {
-  port: process.env.PORT || 5000,
+  port: process.env.PORT || 3000,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiration: process.env.JWT_EXPIRATION || "1h",
   db: {

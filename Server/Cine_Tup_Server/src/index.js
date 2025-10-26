@@ -28,9 +28,9 @@ app.use(cors({
 }));
 
 
-app.use("/api", movieRoutes);
-app.use("/api", userRoutes);
-app.use("/api", ticketRoutes);
+app.use("/", movieRoutes);
+app.use("/", userRoutes);
+app.use("/", ticketRoutes);
 
 // Inicializar base de datos y servidor
 try {
