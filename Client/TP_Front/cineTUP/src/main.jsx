@@ -5,14 +5,14 @@ import './App.css'
 import App from './App.jsx'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ThemeProvider } from './context/ThemeContext.jsx';
-import AuthContextProvider from '../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContextProvider.jsx'
+import AuthContextProvider from './context/AuthContextProvider.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
-      <AuthContextProvider>  
+    <AuthContextProvider>
+      <ThemeProvider>
         <App />
-      </AuthContextProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </AuthContextProvider>
   </StrictMode>,
 );

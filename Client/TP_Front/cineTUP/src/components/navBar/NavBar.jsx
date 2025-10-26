@@ -2,7 +2,7 @@ import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import { useContext } from "react";
-import { AuthContext } from "../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const NavBar = () => {
   const { theme, toggleTheme } = useTheme();

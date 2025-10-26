@@ -72,7 +72,7 @@ const Register = () => {
             return;
         }
 
-       // email validation
+        // email validation
         if (!email || !validateEmail(email)) {
             setErrors(prev => ({ ...prev, email: true }));
             return;
@@ -86,7 +86,7 @@ const Register = () => {
         }
 
 
-        fetch("http://localhost:3000/users/register", {
+        fetch(`${import.meta.env.VITE_APP_API_URL}/users/register`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -97,28 +97,29 @@ const Register = () => {
                 password
             })
         })
+        
             .then(async (res) => {
                 const data = await res.json();
 
                 if (!res.ok) {
                     throw new Error(data.message || "Error en el registro");
                 }
-            
-            
+
+
                 console.log(data);
                 successToast(data.message || "Registro exitoso");
                 setName("");
                 setEmail("");
                 setPassword("");
-               
+
                 setTimeout(() => {
-                     navigate("/login");
+                    navigate("/login");
                 }, 3000);
-            })                
+            })
             .catch((err) => {
                 errorToast(err.message);
             })
-                
+
 
 
     }
@@ -134,7 +135,7 @@ const Register = () => {
                         autoComplete="username"
                         type="text"
                         className={errors.name ? "border border-danger" : ""}
-                        placeholder = 'Ingresar nombre de usuario'
+                        placeholder='Ingresar nombre de usuario'
                         onChange={handleNameChange}
                         onBlur={handleNameBlur}
                         value={name} />
@@ -145,7 +146,7 @@ const Register = () => {
                         autoComplete="email"
                         type="email"
                         className={errors.email ? "border border-danger" : ""}
-                        placeholder = 'Ingresar email'
+                        placeholder='Ingresar email'
                         onChange={handleEmailChange}
                         onBlur={handleEmailBlur}
                         value={email} />
@@ -156,7 +157,7 @@ const Register = () => {
                         autoComplete="current-password"
                         type="password"
                         className={errors.password ? "border border-danger" : ""}
-                        placeholder = 'Ingresar contraseña'
+                        placeholder='Ingresar contraseña'
                         onChange={handlePasswordChange}
                         onBlur={handlePasswordBlur}
                         value={password}
@@ -175,12 +176,12 @@ const Register = () => {
                 </Row>
             </Form>
             {registerMessage && (
-            <div className="mt-3">
-                <div className="mt-4 text-center">
-                    <p className="text-success fw-bold">{registerMessage}</p>
+                <div className="mt-3">
+                    <div className="mt-4 text-center">
+                        <p className="text-success fw-bold">{registerMessage}</p>
+                    </div>
                 </div>
-            </div>
-    )} 
+            )}
             <ToastContainer position="top-right" autoClose={5000} />
         </AuthContainer>
     )
