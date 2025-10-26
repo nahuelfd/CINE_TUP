@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from 'react';
-import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap"
+import { Button, Col, Form, FormGroup, Row } from "react-bootstrap"
 import { useNavigate } from 'react-router';
 import { initialErrors } from './Login.data';
 import AuthContainer from "../authContainer/AuthContainer";
@@ -7,7 +7,7 @@ import { AuthContext } from '../../../../../../../Server/Cine_Tup_Server/src/ser
 import useFetch from '../../../useFetch/useFetch';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { validateEmail, validatePassword } from '../../../../../../../Server/Cine_Tup_Server/src/utils/validations';
+import { validateEmail } from '../../../../../../../Server/Cine_Tup_Server/src/utils/validations';
 
 const errorToast = (msg) => {
     toast.error(msg, {
@@ -86,7 +86,7 @@ const Login = () => {
 
         setErrors(initialErrors);
         
-        post("/login", 
+        post("/users/login", 
             false, 
             {
                 email,

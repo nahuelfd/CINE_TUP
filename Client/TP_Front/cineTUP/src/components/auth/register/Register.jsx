@@ -81,11 +81,12 @@ const Register = () => {
         // password validation
         if (!password || !validatePassword(password, 7, 20, true, true)) {
             setErrors(prev => ({ ...prev, password: true }));
+            setRegisterMessage("");
             return;
         }
 
 
-        fetch("http://localhost:3000/register", {
+        fetch("http://localhost:3000/users/register", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -179,7 +180,7 @@ const Register = () => {
                     <p className="text-success fw-bold">{registerMessage}</p>
                 </div>
             </div>
-    )}
+    )} 
             <ToastContainer position="top-right" autoClose={5000} />
         </AuthContainer>
     )
