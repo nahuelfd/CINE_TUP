@@ -2,15 +2,19 @@ import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import { useContext } from "react";
-import { AuthContext } from "../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext";
+import { AuthContext } from "../../services/authContext/AuthContext";
 
 const NavBar = () => {
   const { theme, toggleTheme } = useTheme();
-  const { token, onLogout } = useContext(AuthContext);
+  const { token, role, onLogout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleProfileClick = () => {
     navigate("/profile");
+  };
+
+  const handleAdminClick = () => {
+    navigate("/sysadminPanel"); 
   };
 
   const handleLogoutClick = () => {
@@ -18,7 +22,9 @@ const NavBar = () => {
     navigate("/login");
   };
 
-  return (
+  
+
+   return (
     <Navbar
       expand="lg"
       className="px-2 navbar-theme"
@@ -36,7 +42,6 @@ const NavBar = () => {
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto text-center">
             <Nav.Link
@@ -69,13 +74,28 @@ const NavBar = () => {
               </Button>
             ) : (
               <>
-                <Button
-                  onClick={handleProfileClick}
-                  variant={theme === "dark" ? "outline-light" : "outline-dark"}
-                  className="fw-bold rounded-pill px-3"
-                >
-                  👤 Perfil
-                </Button>
+                {/* Renderizado según rol */}
+                {role === "user" && (
+                  <Button
+                    onClick={handleProfileClick}
+                    variant={theme === "dark" ? "outline-light" : "outline-dark"}
+                    className="fw-bold rounded-pill px-3"
+                  >
+                    👤 Perfil
+                  </Button>
+                )}
+
+                {role === "sysadmin" && (
+                  <Button
+                    onClick={handleAdminClick}
+                    variant={theme === "dark" ? "outline-light" : "outline-dark"}
+                    className="fw-bold rounded-pill px-3"
+                  >
+                    ⚙️ Panel de Control
+                  </Button>
+                )}
+
+                {/* Siempre mostrar cerrar sesión si hay token */}
                 <Button
                   onClick={handleLogoutClick}
                   variant={theme === "dark" ? "outline-light" : "outline-dark"}

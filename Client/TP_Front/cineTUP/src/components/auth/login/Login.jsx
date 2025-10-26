@@ -3,7 +3,7 @@ import { Button, Col, Form, FormGroup, Row } from "react-bootstrap"
 import { useNavigate } from 'react-router';
 import { initialErrors } from './Login.data';
 import AuthContainer from "../authContainer/AuthContainer";
-import { AuthContext } from '../../../../../../../Server/Cine_Tup_Server/src/services/authContext/AuthContext';
+import { AuthContext } from '../../../services/authContext/AuthContext';
 import useFetch from '../../../useFetch/useFetch';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -92,8 +92,8 @@ const Login = () => {
                 email,
                 password
             },
-            token => {
-                onLogin(token)
+            data => {
+                onLogin(data.token)
                 setEmail('');
                 setPassword('')
                 navigate('/peliculas')
