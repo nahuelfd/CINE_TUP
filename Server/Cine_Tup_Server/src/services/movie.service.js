@@ -30,7 +30,7 @@ export const findMovie = async (req, res) => {
 
 export const createMovie = async (req, res) => {
   try {
-    const { title, director, category, summary, imageUrl, bannerURL, duration, language, isAvailable } = req.body;
+    const { title, director, category, summary, imageUrl, duration, language, isAvailable } = req.body;
 
     if (!title || !director)
       return res
@@ -43,7 +43,6 @@ export const createMovie = async (req, res) => {
       category, 
       summary, 
       imageUrl, 
-      bannerURL,
       duration,
       language,
       isAvailable
@@ -59,7 +58,7 @@ export const createMovie = async (req, res) => {
 export const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, director, category, summary, imageUrl, bannerURL, duration, language, isAvailable } = req.body;
+    const { title, director, category, summary, imageUrl, duration, language, isAvailable } = req.body;
 
     if (!title || !director)
       return res

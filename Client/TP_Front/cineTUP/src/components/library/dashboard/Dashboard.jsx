@@ -1,22 +1,22 @@
-import MovieList from "../movieList/MovieList"
-import { useState, useEffect } from "react"
-import AddMovie from "../../movie/AddMovie"
+import MovieList from "../movieList/MovieList";
+import { useState, useEffect } from "react";
+import AddMovie from "../../movie/AddMovie";
 
 const Dashboard = () => {
   const [movies, setMovies] = useState([]);
+
   const fetchMovies = async () => {
-      try {
+    try {
       const token = localStorage.getItem("cine-tup-token");
-      if (!token) {
-        Navigate("/login");
-        return;
+      const headers = { "Content-Type": "application/json" };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
       }
+
       const response = await fetch("http://localhost:3000/movies", {
         method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+        headers
       });
 
       if (!response.ok) {
@@ -31,20 +31,23 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-  fetchMovies();
-}, []);
+    fetchMovies();
+  }, []);
 
-const handleMovieAdded = async () => {
-  await fetchMovies();
-}
+  const handleMovieAdded = async () => {
+    await fetchMovies();
+  };
+
+  const isLoggedIn = !!localStorage.getItem("cine-tup-token");
 
   return (
     <div className="dashboard-page">
-      {/*<AddMovie onMovieAdded={handleMovieAdded}/>*/}
-      <h1 className="fw-bold text-center  mt-4">PELÍCULAS EN CARTELERA</h1>
+      {isLoggedIn && <AddMovie onMovieAdded={handleMovieAdded} />}
+
+      <h1 className="fw-bold text-center mt-4">PELÍCULAS EN CARTELERA</h1>
       <MovieList movies={movies} />
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
