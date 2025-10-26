@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Card, Col, Form, Row, Button } from "react-bootstrap";
-// import { errorToast } from "../../shared/notifications/notification";
+
 
 const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [title, setTitle] = useState(movie?.title || "");
@@ -9,6 +9,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [category, setCategory] = useState(movie?.category || "");
   const [summary, setSummary] = useState(movie?.summary || "");
   const [imageUrl, setImageUrl] = useState(movie?.imageUrl || "");
+  const [bannerURL, setBannerURL] = useState(movie?.bannerURL || "");
   const [duration, setDuration] = useState(movie?.duration || "");
   const [language, setLanguage] = useState(movie?.language || "");
   const [isAvailable, setIsAvailable] = useState(movie?.isAvailable || false);
@@ -18,17 +19,13 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-   /* if (!title || !director) {
-      errorToast("El título y/o director son requeridos.");
-      return;
-    }
-*/
     const newMovie = {
       title,
       director,
       category,
       summary,
       imageUrl,
+      bannerURL,
       duration: duration ? parseInt(duration, 10) : null,
       language,
       isAvailable
@@ -38,7 +35,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       const res = await fetch(
         isEditing
           ? `http://localhost:3000/movie/${movie.id}`
-          : "http://localhost:3000/movie",
+          : "http://localhost:3000/movies",
         {
           method: isEditing ? "PUT" : "POST",
           headers: {
@@ -49,7 +46,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
         }
       );
 
-      const data = await res.json();
+       const data = await res.json();
       console.log(isEditing ? "Película editada:" : "Película creada:", data);
       onMovieAdded(data); // refresca la lista
       if (!isEditing) {
@@ -61,7 +58,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
     }
   };
 
-  const handleGoBack = () => navigate("/movies");
+  const handleGoBack = () => navigate("/movie");
 
   return (
     <Card className="mb-5 w-100" bg="success">
@@ -143,6 +140,17 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   placeholder="Ingresar URL de imagen"
                   value={imageUrl}
                   onChange={e => setImageUrl(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group className="mb-3" controlId="bannerURL">
+                <Form.Label>URL de Banner</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingresar URL del banner"
+                  value={bannerURL}
+                  onChange={e => setBannerURL(e.target.value)}
                 />
               </Form.Group>
             </Col>

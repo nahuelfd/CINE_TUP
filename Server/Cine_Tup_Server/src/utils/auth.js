@@ -3,16 +3,20 @@ import { config } from "../config.js";
 
 export const verifyToken = (req, res, next) => {
   const header = req.header("Authorization") || "";
+  console.log("Header recibido:", header);
   const token = header.split(" ")[1];
+  console.log("Token extraído:", token);
 
   if (!token)
     return res.status(401).json({ message: "No posee autorización requerida" });
 
   try {
     const payload = jwt.verify(token, config.jwtSecret);
+    console.log("✅ Token válido, payload:", payload);
     req.user = payload; 
     next();
   } catch (error) {
+    console.log("❌ Token inválido o expirado:", error.message);
     return res.status(401).json({ message: "No posee permisos correctos" });
   }
 };

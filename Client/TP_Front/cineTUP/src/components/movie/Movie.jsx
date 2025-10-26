@@ -1,26 +1,43 @@
 import { useEffect, useState } from "react";
+
 import AddMovie from "./AddMovie";
 import './movie.css';
+import { Navigate } from "react-router";
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
 
+
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const token = localStorage.getItem("cine-tup-token");
-        const response = await fetch.get("http://localhost:3000/movies",{
+      const token = localStorage.getItem("cine-tup-token");
+      console.log("Token en Movie.jsx:", token);
+      if (!token) {
+        Navigate("/login");
+        return;
+      }
+      const response = await fetch("http://localhost:3000/movies", {
+        method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
         }
       });
-        setMovies(response.data);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
-    fetchMovies();
-  }, []);
+
+      const data = await response.json();
+      setMovies(data);
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
+  };
+
+  fetchMovies();
+}, []);
 
 
   const handleMovieAdded = (newMovie) => {

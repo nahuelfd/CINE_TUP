@@ -1,88 +1,110 @@
 import { Movie } from "../entities/Movie.js";
-
 import { ERROR_CODE } from "../errorCodes.js";
 
 export const findMovies = async (_, res) => {
-  const movies = await Movie.findAll();
-  res.json(movies);
+  try {
+    const movies = await Movie.findAll();
+    res.json(movies);
+  } catch (err) {
+    console.error("Error fetching movies:", err);
+    res.status(500).json({ message: "Error al obtener películas" });
+  }
 };
 
 export const findMovie = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const movie = await Movie.findByPk(id);
 
-  const movie = await Movie.findByPk(id);
+    if (!movie)
+      return res
+        .status(ERROR_CODE.NOT_FOUND)
+        .json({ message: "Pelicula no encontrada" });
 
-  if (!movie)
-    return res
-      .status(ERROR_CODE.NOT_FOUND)
-      .send({ message: "Pelicula no encontrada" });
-
-  res.json(movie);
+    res.json(movie);
+  } catch (err) {
+    console.error("Error fetching movie:", err);
+    res.status(500).json({ message: "Error al obtener la película" });
+  }
 };
 
 export const createMovie = async (req, res) => {
-  const { title, director, category, summary, imageUrl, duration, language, isAvailable } = req.body;
+  try {
+    const { title, director, category, summary, imageUrl, bannerURL, duration, language, isAvailable } = req.body;
 
-  if (!title || !director)
-    return res
-      .status(ERROR_CODE.BAD_REQUEST)
-      .send({ message: "Título y director son campos requeridos" });
+    if (!title || !director)
+      return res
+        .status(ERROR_CODE.BAD_REQUEST)
+        .json({ message: "Título y director son campos requeridos" });
 
-  const newMovie = await Movie.create({
-    title, 
-    director, 
-    category, 
-    summary, 
-    imageUrl, 
-    duration,
-    language,
-    isAvailable
-  });
+    const newMovie = await Movie.create({
+      title, 
+      director, 
+      category, 
+      summary, 
+      imageUrl, 
+      bannerURL,
+      duration,
+      language,
+      isAvailable
+    });
 
-  res.json(newMovie);
+    res.json(newMovie);
+  } catch (err) {
+    console.error("Error creating movie:", err);
+    res.status(500).json({ message: "Error al crear película" });
+  }
 };
 
 export const updateMovie = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const { title, director, category, summary, imageUrl, bannerURL, duration, language, isAvailable } = req.body;
 
-  const { title, director, category, summary, imageUrl, duration, language, isAvailable } =
-    req.body;
+    if (!title || !director)
+      return res
+        .status(ERROR_CODE.BAD_REQUEST)
+        .json({ message: "Título y director son campos requeridos" });
 
+    const movie = await Movie.findByPk(id);
 
-  if (!title || !director)
-    return res
-      .status(ERROR_CODE.BAD_REQUEST)
-      .send({ message: "Título y autor son campos requeridos" });
+    if (!movie)
+      return res
+        .status(ERROR_CODE.NOT_FOUND)
+        .json({ message: "Pelicula no encontrada" });
 
-  const movie = await Movie.findByPk(id);
+    await movie.update({
+      title, 
+      director, 
+      category, 
+      summary, 
+      imageUrl, 
+      duration,
+      language,
+      isAvailable
+    });
 
-  await movie.update({
-    title, 
-    director, 
-    category, 
-    summary, 
-    imageUrl, 
-    duration,
-    language,
-    isAvailable
-  });
-
-  await movie.save();
-
-  res.send(movie);
+    res.json(movie);
+  } catch (err) {
+    console.error("Error updating movie:", err);
+    res.status(500).json({ message: "Error al actualizar película" });
+  }
 };
 
 export const deleteMovie = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const movie = await Movie.findByPk(id);
 
-  const movie = await Movie.findByPk(id);
+    if (!movie)
+      return res
+        .status(ERROR_CODE.NOT_FOUND)
+        .json({ message: "Pelicula no encontrada" });
 
-  if (!movie)
-    return res
-      .status(ERROR_CODE.NOT_FOUND)
-      .send({ message: "Pelicula no encontrada" });
-
-  await movie.destroy();
-
-  res.send(`Borrando pelicula con ID ${id}`);
+    await movie.destroy();
+    res.json({ message: `Pelicula con ID ${id} eliminada` });
+  } catch (err) {
+    console.error("Error deleting movie:", err);
+    res.status(500).json({ message: "Error al eliminar película" });
+  }
 };

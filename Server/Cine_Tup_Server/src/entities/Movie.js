@@ -24,6 +24,7 @@ export const Movie = sequelize.define("movie", {
     imageUrl: {
         type: DataTypes.STRING,
     },
+
     duration: {
         type: DataTypes.INTEGER,
     },

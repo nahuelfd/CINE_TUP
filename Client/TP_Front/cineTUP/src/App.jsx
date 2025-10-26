@@ -7,6 +7,7 @@ import NavBar from './components/navBar/NavBar';
 import Home from './components/home/Home'
 import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
+import Movie from "./components/movie/Movie"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/peliculas" element={<Dashboard />} />
           <Route path="/estrenos" element={<Releases />} />
           <Route path="/peliculas/:id" element={<MovieTickets />} />
+          <Route path="/movie" element={<Movie />} />
         </Routes>
       </div>
     </BrowserRouter>
