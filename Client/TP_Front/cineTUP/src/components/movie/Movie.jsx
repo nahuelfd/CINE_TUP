@@ -12,7 +12,6 @@ const Movie = () => {
     const fetchMovies = async () => {
       try {
       const token = localStorage.getItem("cine-tup-token");
-      console.log("Token en Movie.jsx:", token);
       if (!token) {
         Navigate("/login");
         return;

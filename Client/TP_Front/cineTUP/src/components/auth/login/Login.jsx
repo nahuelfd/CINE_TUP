@@ -74,8 +74,7 @@ const Login = () => {
       "/users/login",
       false,
       { email, password },
-      (data) => { // data = { message, token, user }
-        console.log("Respuesta login:", data);
+      (data) => { 
 
         const token = data?.token;
         if (!token) {

@@ -46,9 +46,8 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
         }
       );
 
-       const data = await res.json();
-      console.log(isEditing ? "Película editada:" : "Película creada:", data);
-      onMovieAdded(data); // refresca la lista
+      const data = await res.json();
+      onMovieAdded(); // refresca la lista
       if (!isEditing) {
         setTitle(""); setDirector(""); setCategory(""); setSummary("");
         setImageUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
