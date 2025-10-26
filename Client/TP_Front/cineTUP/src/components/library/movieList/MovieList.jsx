@@ -9,7 +9,7 @@ const MovieList = ({ movies }) => {
   if (!Array.isArray(movies) || movies.length === 0) {
     return <p className="text-center mt-4">No hay películas disponibles.</p>;
   }
-  const availableMovies = movies.filter(movie => movie.isAvailable)
+  let availableMovies = movies.filter(movie => movie.isAvailable)
   if (categoryFilter) {
     availableMovies = availableMovies.filter(movie => movie.category.toLowerCase() === categoryFilter.toLowerCase())
   }
