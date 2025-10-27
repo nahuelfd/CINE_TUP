@@ -9,6 +9,7 @@ import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
 import AllMovies from './components/borrador/borrador'
 
+import SysadminPanel from './components/protectedRoutes/SysadminPanel';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/estrenos" element={<Releases />} />
           <Route path="/peliculas/:id" element={<MovieTickets />} />
           <Route path="/borrador" element={<AllMovies />} />
+          <Route path="/sysadminPanel" element={<SysadminPanel />} />
         </Routes>
       </div>
     </BrowserRouter>
