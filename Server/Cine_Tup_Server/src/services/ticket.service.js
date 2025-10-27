@@ -21,34 +21,27 @@ export const findTicket = async (req, res) => {
 
 export const createTicket = async (req, res) => {
   try {
-    const { seatNumber, price, movieId } = req.body;
+    const { seatNumber, movieId } = req.body;
     const userId = req.user.id;
 
-    if (!seatNumber || !price || !movieId || !userId) {
-      return res.status(ERROR_CODE.BAD_REQUEST)
-        .json({ message: "Campos requeridos faltantes" });
-    }
+    const ticket = await Ticket.findOne({ where: { movieId, seatNumber } });
 
-    const existingTicket = await Ticket.findOne({
-      where: { movieId, seatNumber }
-    });
+    if (!ticket)
+      return res.status(404).json({ message: "Butaca no encontrada" });
 
-    if (existingTicket) {
+    if (!ticket.isAvailable)
       return res.status(400).json({ message: "El asiento ya está ocupado" });
-    }
 
-    const newTicket = await Ticket.create({
-      seatNumber,
-      price,
-      movieId,
+    await ticket.update({
+      isAvailable: false,
       userId,
-      isAvailable: false
+      purchaseDate: new Date(),
     });
 
-    res.status(201).json(newTicket);
+    res.json(ticket);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al crear el ticket" });
+    res.status(500).json({ message: "Error al comprar ticket" });
   }
 };
 
@@ -62,8 +55,6 @@ export const updateTicket = async (req, res) => {
     return res.status(ERROR_CODE.NOT_FOUND).json({ message: "Ticket no encontrado" });
 
   await ticket.update({ seatNumber, price });
-  await ticket.save();
-
   res.json(ticket);
 };
 
@@ -83,7 +74,9 @@ export const deleteTicket = async (req, res) => {
 export const findTicketsByMovie = async (req, res) => {
   try {
     const movieId = parseInt(req.params.id);
+    console.log("findTicketsByMovie: requested movieId =", movieId);
     const tickets = await Ticket.findAll({ where: { movieId } });
+    console.log(`findTicketsByMovie: found ${tickets.length} tickets for movieId ${movieId}`);
     res.json(tickets);
   } catch (error) {
     console.error(error);

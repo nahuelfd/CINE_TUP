@@ -1,117 +1,94 @@
-import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import useFetch from "../../../useFetch/useFetch";
+import { useParams } from "react-router-dom";
+import "./MovieTickets.css";
 
 const MovieTickets = () => {
   const { id } = useParams();
-  const { get, post } = useFetch(); 
+  const { get, isLoading } = useFetch();
   const [tickets, setTickets] = useState([]);
-  const [selectedTickets, setSelectedTickets] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [movie, setMovie] = useState(null);
 
-  const token = localStorage.getItem("cine-tup-token");
-  const userId = localStorage.getItem("userId");
-
-  // Trae tickets desde la BD al cargar la página
+  // Trae los tickets
   useEffect(() => {
     const fetchTickets = async () => {
-      try {
-        const data = await get(`/tickets/movie/${id}`, true);
-        setTickets(data);
-      } catch (error) {
-        console.error("Error al cargar tickets:", error);
-      }
+      console.log("MovieTickets: request tickets for movie id:", id);
+      const data = await get(`/tickets/movie/${id}`, true);
+      console.log("MovieTickets: received tickets:", data);
+      if (data) setTickets(data);
     };
     fetchTickets();
   }, [id]);
 
-  const toggleTicket = (ticketId) => {
-    setSelectedTickets(prev =>
-      prev.includes(ticketId)
-        ? prev.filter(id => id !== ticketId)
-        : [...prev, ticketId]
-    );
-  };
+  // Trae los detalles de la película
+  useEffect(() => {
+    const fetchMovie = async () => {
+      const data = await get(`/movies/${id}`, true);
+      console.log("MovieTickets: received movie:", data);
+      if (data) setMovie(data);
+    };
+    fetchMovie();
+  }, [id]);
 
-  const buyTickets = async () => {
-    if (!token || !userId) {
-      alert("Debes iniciar sesión para comprar tickets");
-      return;
-    }
+  if (isLoading || !movie) {
+    return <div className="movie-tickets__loading">Cargando...</div>;
+  }
 
-    try {
-      setLoading(true);
-
-      for (const ticket of selectedTickets) {
-        await post(
-          "/ticket",
-          true,
-          { seatNumber: ticket, price: 10000, movieId: parseInt(id) },
-          (data) => console.log("Ticket comprado:", data),
-          (err) => { throw new Error(err.message || "Error al comprar ticket"); }
-        );
-      }
-
-      const updatedTickets = await get(`/tickets/movie/${id}`, true);
-      setTickets(updatedTickets);
-
-      alert("¡Compra realizada con éxito!");
-      setSelectedTickets([]);
-    } catch (error) {
-      console.error("Error al comprar tickets:", error);
-      alert(error.message || "Error al comprar los tickets");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Agrupar tickets por filas (A, B, C...)
   const rows = {};
   tickets.forEach(ticket => {
-    const rowLetter = ticket.seatNumber[0];
-    if (!rows[rowLetter]) rows[rowLetter] = [];
-    rows[rowLetter].push(ticket);
+    const row = ticket.seatNumber[0];
+    if (!rows[row]) rows[row] = [];
+    rows[row].push(ticket);
   });
 
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4">Tickets</h1>
+    <div className="movie-tickets__container">
+      {/* TÍTULO ARRIBA DEL TODO */}
+      <h1 className="movie-tickets__title">{movie.title}</h1>
 
-      <div className="row">
-        <div className="col-md-8">
-          {Object.keys(rows).map(row => (
-            <div className="row mb-2" key={row}>
-              {rows[row].map(ticket => (
-                <div className="col-1" key={ticket.id}>
+      <div className="movie-tickets__main">
+        {/* BLOQUE IZQUIERDO: PORTADA + INFO */}
+        <div className="movie-tickets__info">
+          <img
+            src={movie.imageUrl}
+            alt={movie.title}
+            className="movie-tickets__poster"
+          />
+
+          <div className="movie-tickets__details">
+            <p><strong>Categoría:</strong> {movie.category || "Sin categoría"}</p>
+            <p><strong>Duración:</strong> {movie.duration ? `${movie.duration} min` : "N/A"}</p>
+            <p><strong>Idioma:</strong> {movie.language || "Desconocido"}</p>
+            <p><strong>Director:</strong> {movie.director || "No especificado"}</p>
+            <p><strong>Resumen:</strong></p>
+            <p className="movie-tickets__summary">{movie.summary || "Sin descripción disponible."}</p>
+          </div>
+        </div>
+
+        {/* BLOQUE DERECHO: TICKETS */}
+        <div className="movie-tickets__seats">
+          <h2>Tickets Disponibles</h2>
+
+          {Object.keys(rows).length === 0 ? (
+            <p>No hay tickets disponibles.</p>
+          ) : (
+            Object.keys(rows).map(row => (
+              <div key={row} className="ticket-row">
+                {rows[row].map(ticket => (
                   <button
-                    className="btn fw-bold"
-                    style={{
-                      backgroundColor: ticket.isAvailable
-                        ? selectedTickets.includes(ticket.id) ? "#343a40" : "#212529"
-                        : "#6c757d",
-                      color: "white",
-                      border: "none",
-                      width: "100%",
-                      padding: "0.5rem",
-                    }}
-                    disabled={!ticket.isAvailable || loading}
-                    onClick={() => toggleTicket(ticket.seatNumber)}
+                    key={ticket.id}
+                    className={`ticket-btn ${ticket.isAvailable ? "available" : "unavailable"}`}
+                    disabled={!ticket.isAvailable}
                   >
                     {ticket.seatNumber}
                   </button>
-                </div>
-              ))}
-            </div>
-          ))}
+                ))}
+              </div>
+            ))
+          )}
         </div>
       </div>
-
-      {selectedTickets.length > 0 && (
-        <div className="text-center mt-4">
-          <button className="btn btn-primary" onClick={buyTickets} disabled={loading}>
-            {loading ? "Procesando..." : `Comprar ${selectedTickets.length} ticket(s)`}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

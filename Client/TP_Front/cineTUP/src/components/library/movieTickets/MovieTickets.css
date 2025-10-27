@@ -1,0 +1,112 @@
+.movie-tickets__container {
+  padding: 2rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
+
+.movie-tickets__title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  color: var(--section-title-color);
+  border-bottom: 3px solid #007bff;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+
+.movie-tickets__main {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Bloque de info (portada + detalles) */
+.movie-tickets__info {
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.movie-tickets__poster {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.movie-tickets__details {
+  width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.movie-tickets__summary {
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* Bloque de tickets */
+.movie-tickets__seats {
+  flex: 1.2;
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: var(--text);
+}
+
+.movie-tickets__seats h2 {
+  margin-bottom: 1.2rem;
+  color: #007bff;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+}
+
+.ticket-btn {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 6px;
+  border: none;
+  margin: 0.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: bold;
+}
+
+.ticket-btn.available {
+  background-color: #28a745;
+  color: white;
+}
+
+.ticket-btn.available:hover {
+  background-color: #218838;
+}
+
+.ticket-btn.unavailable {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.movie-tickets__loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}

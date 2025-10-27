@@ -1,4 +1,5 @@
 import { Movie } from "../entities/Movie.js";
+import { Ticket } from "../entities/Ticket.js";
 import { ERROR_CODE } from "../errorCodes.js";
 
 export const findMovies = async (_, res) => {
@@ -49,7 +50,24 @@ export const createMovie = async (req, res) => {
       isAvailable
     });
 
-    res.json(newMovie);
+    const rows = ["A", "B", "C", "D", "E"];
+    const seatsPerRow = 10;
+
+    const tickets = [];
+    for (const row of rows) {
+      for (let i = 1; i <=seatsPerRow; i++){
+        tickets.push({
+          seatNumber: `${row}${i}`,
+          price: 10000,
+          movieId: newMovie.id,
+          isAvailable: true,
+        });
+      }
+    }
+
+    await Ticket.bulkCreate(tickets);
+    
+    res.json({ movie: newMovie, tickets });
   } catch (err) {
     console.error("Error creating movie:", err);
     res.status(500).json({ message: "Error al crear película" });

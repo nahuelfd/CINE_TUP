@@ -17,6 +17,10 @@ export const Ticket = sequelize.define("ticket", {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
+  isAvailable: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
   purchaseDate: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
@@ -25,7 +29,7 @@ export const Ticket = sequelize.define("ticket", {
 
 // relacion de ticket como movie y user
 Ticket.belongsTo(Movie, { foreignKey: "movieId", onDelete: "CASCADE" });
-Ticket.belongsTo(User, { foreignKey: "userId", onDelete: "CASCADE" });
+Ticket.belongsTo(User, { foreignKey: "userId", onDelete: "SET NULL" });
 
 // relacion inversa que implica que una movie o user pueden tener muchos tickets
 Movie.hasMany(Ticket, { foreignKey: "movieId" });
