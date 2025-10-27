@@ -1,16 +1,19 @@
-import { Card, Row } from "react-bootstrap"
+import { Card, Row } from "react-bootstrap";
+import "./AuthContainer.css";
 
 const AuthContainer = ({ children }) => {
-    return (
-        <Card className="mt-5 mx-3 p-3 px-5 shadow">
-            <Card.Body>
-                <Row className="mb-2">
-                    <h5>¡Bienvenidos a CINETUP!</h5>
-                </Row>
-                {children}
-            </Card.Body>
-        </Card>
-    )
-}
+  return (
+    <div className="auth-wrapper">
+      <Card className="auth-card shadow-lg">
+        <Card.Body>
+          <Row className="text-center mb-4">
+            <h5 className="auth-welcome">¡Bienvenidos a CINETUP!</h5>
+          </Row>
+          {children}
+        </Card.Body>
+      </Card>
+    </div>
+  );
+};
 
-export default AuthContainer
+export default AuthContainer;

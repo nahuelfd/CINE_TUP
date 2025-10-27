@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Card, Col, Form, Row, Button } from "react-bootstrap";
-
+import "./AddMovie.css"
 
 const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [title, setTitle] = useState(movie?.title || "");
@@ -9,7 +9,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [category, setCategory] = useState(movie?.category || "");
   const [summary, setSummary] = useState(movie?.summary || "");
   const [imageUrl, setImageUrl] = useState(movie?.imageUrl || "");
-  const [bannerURL, setBannerURL] = useState(movie?.bannerURL || "");
+  const [bannerUrl, setBannerUrl] = useState(movie?.bannerUrl || "");
   const [duration, setDuration] = useState(movie?.duration || "");
   const [language, setLanguage] = useState(movie?.language || "");
   const [isAvailable, setIsAvailable] = useState(movie?.isAvailable || false);
@@ -25,7 +25,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       category,
       summary,
       imageUrl,
-      bannerURL,
+      bannerUrl,
       duration: duration ? parseInt(duration, 10) : null,
       language,
       isAvailable
@@ -34,7 +34,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
     try {
       const res = await fetch(
         isEditing
-          ? `http://localhost:3000/movie/${movie.id}`
+          ? `http://localhost:3000/movies/${movie.id}`
           : "http://localhost:3000/movies",
         {
           method: isEditing ? "PUT" : "POST",
@@ -50,17 +50,17 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       onMovieAdded(); // refresca la lista
       if (!isEditing) {
         setTitle(""); setDirector(""); setCategory(""); setSummary("");
-        setImageUrl("");setBannerURL(""); setDuration(""); setLanguage(""); setIsAvailable(false);
+        setImageUrl("");setBannerUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
       }
     } catch (err) {
       console.error("Error creando/actualizando película:", err);
     }
   };
 
-  const handleGoBack = () => navigate("/movie");
+  const handleGoBack = () => navigate("/");
 
   return (
-    <Card className="mb-5 w-100" bg="success">
+    <Card className="movie-form-card mb-5 w-100">
       <Card.Body>
         <Form className="text-white" onSubmit={handleSubmit}>
           <Row>
@@ -143,13 +143,13 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Form.Group className="mb-3" controlId="bannerURL">
+              <Form.Group className="mb-3" controlId="bannerUrl">
                 <Form.Label>URL de Banner</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar URL del banner"
-                  value={bannerURL}
-                  onChange={e => setBannerURL(e.target.value)}
+                  value={bannerUrl}
+                  onChange={e => setBannerUrl(e.target.value)}
                 />
               </Form.Group>
             </Col>
