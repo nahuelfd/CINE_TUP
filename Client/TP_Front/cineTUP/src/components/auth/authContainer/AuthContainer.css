@@ -1,0 +1,40 @@
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+/* Tarjeta principal */
+.auth-card {
+  background-color: var(--card-background);
+  border: none;
+  border-radius: 20px;
+  padding: 2rem 3rem;
+  color: var(--text-color);
+  width: 400px;
+  max-width: 90%;
+}
+
+/* Título superior */
+.auth-welcome {
+  color: var(--text-color);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Variables modo claro */
+:root {
+  --background-color: #f6f6f6;
+  --card-background: #ffffff;
+  --text-color: #000000;
+}
+
+/* Variables modo oscuro */
+[data-theme="dark"] {
+  --background-color: #0e0e0e;
+  --card-background: #1b1b1b;
+  --text-color: #ffffff;
+}

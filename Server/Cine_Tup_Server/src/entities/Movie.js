@@ -37,6 +37,6 @@ export const Movie = sequelize.define("movie", {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     }
-    
+
 
 }, { timestamps: false })

@@ -9,6 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { validateEmail } from '../../../utils/validation'; // Ajusta según tu estructura
 
+
 const errorToast = (msg) => {
   toast.error(msg, {
     position: "top-right",
@@ -98,6 +99,8 @@ const Login = () => {
 
   return (
     <AuthContainer>
+      <div className="login-form-card">
+        <h2>Iniciar Sesión</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup className="mb-4">
           <Form.Label>Email</Form.Label>
@@ -143,6 +146,7 @@ const Login = () => {
         </Row>
       </Form>
       <ToastContainer />
+      </div>
     </AuthContainer>
   );
 };

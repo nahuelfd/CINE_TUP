@@ -1,47 +1,91 @@
-.add-movie-form {
-  max-width: 500px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #eef2f5;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+/* 🎬 Estilos generales del formulario */
+.movie-form-card {
+  max-width: 900px;
+  margin: 3rem auto;
+  background: linear-gradient(135deg, #1a1a1a, #2e2e2e);
+  color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  padding: 2rem;
+  transition: all 0.3s ease-in-out;
 }
 
-.add-movie-form h2 {
+.movie-form-card:hover {
+  transform: scale(1.01);
+}
+
+/* 📝 Estilos del encabezado */
+.movie-form-card h2 {
   text-align: center;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.add-movie-form label {
-  display: block;
-  margin: 10px 0 5px;
+  margin-bottom: 2rem;
   font-weight: bold;
+  letter-spacing: 1px;
+  color: #ffc107;
 }
 
-.add-movie-form input,
-.add-movie-form textarea,
-.add-movie-form select {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 0.95rem;
+/* 🔲 Inputs */
+.movie-form-card .form-control {
+  background-color: #262626;
+  border: 1px solid #444;
+  color: #fff;
+  border-radius: 10px;
+  transition: border-color 0.3s ease;
 }
 
-.add-movie-form button {
-  width: 100%;
-  padding: 10px;
-  background-color: #5c6bc0;
-  color: white;
-  font-size: 1rem;
+.movie-form-card .form-control:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+  background-color: #1e1e1e;
+}
+
+/* 🔘 Switch */
+.movie-form-card .form-check-input:checked {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+/* 🟢 Botones */
+.movie-form-card .btn-primary {
+  background-color: #ffc107;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  color: #000;
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 0.6rem 1.5rem;
+  transition: all 0.3s ease-in-out;
 }
 
-.add-movie-form button:hover {
-  background-color: #3f51b5;
+.movie-form-card .btn-primary:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+.movie-form-card .btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1.5rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.movie-form-card .btn-secondary:hover {
+  background-color: #5a6268;
+  transform: scale(1.05);
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .movie-form-card {
+    padding: 1.5rem;
+  }
+
+  .movie-form-card .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .movie-form-card h2 {
+    font-size: 1.5rem;
+  }
 }
