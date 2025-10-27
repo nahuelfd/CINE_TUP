@@ -3,7 +3,7 @@ import { Button, Col, Form, FormGroup, Row } from "react-bootstrap"
 import { useNavigate } from 'react-router';
 import { initialErrors } from './Login.data';
 import AuthContainer from "../authContainer/AuthContainer";
-import { AuthContext } from '../../../services/authContext/AuthContext';
+import { AuthContext } from '../../../context/AuthContext';
 import useFetch from '../../../useFetch/useFetch';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

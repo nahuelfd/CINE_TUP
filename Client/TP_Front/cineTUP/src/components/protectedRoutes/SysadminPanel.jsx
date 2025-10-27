@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../services/authContext/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import useFetch from "../../useFetch/useFetch";
 import { Table, Button, Form, Container, Alert, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -51,7 +51,7 @@ const SysadminPanel = () => {
     setShowConfirmRoleModal(false);
 
     try {
-      const token = localStorage.getItem("cinetup-token");
+      const token = localStorage.getItem("cine-tup-token");
 
       const response = await fetch(`http://localhost:3000/users/${userId}/role`, {
         method: "PUT",

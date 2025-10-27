@@ -5,8 +5,8 @@ import { jwtDecode } from "jwt-decode";
 
 
 const AuthContextProvider = ({ children }) => {
-    const tokenValue = localStorage.getItem('cinetup-token');
-    const [token, setToken] = useState(() => localStorage.getItem('cinetup-token'));
+    const tokenValue = localStorage.getItem('cine-tup-token');
+    const [token, setToken] = useState(() => localStorage.getItem('cine-tup-token'));
     const [role, setRole] = useState(() => {
         if (tokenValue) {
             try {
@@ -14,7 +14,7 @@ const AuthContextProvider = ({ children }) => {
                 return decoded.role;
             } catch (error) {
                 console.error("Error al decodificar token almacenado:", error);
-                localStorage.removeItem('cinetup-token');
+                localStorage.removeItem('cine-tup-token');
             }
             
         }
@@ -23,7 +23,7 @@ const AuthContextProvider = ({ children }) => {
 
     const handleLogin = (token) => {
         setToken(token);
-        localStorage.setItem('cinetup-token', token)
+        localStorage.setItem('cine-tup-token', token)
 
         try {
             const decoded = jwtDecode(token);
@@ -37,7 +37,7 @@ const AuthContextProvider = ({ children }) => {
     const handleLogout = () => {
         setToken(null);
         setRole(null);
-        localStorage.removeItem('cinetup-token');
+        localStorage.removeItem('cine-tup-token');
     }
 
 
