@@ -7,7 +7,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import useFetch from '../../../useFetch/useFetch';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { validateEmail } from '../../../utils/validation'; // Ajusta según tu estructura
+import { validateEmail } from '../../../utils/validation';
 
 
 const errorToast = (msg) => {
@@ -57,7 +57,7 @@ const Login = () => {
     setErrors(prevErrors => ({ ...prevErrors, password: false }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!email.length) {
@@ -74,28 +74,27 @@ const Login = () => {
 
     setErrors(initialErrors);
 
-    // POST login
-    post(
-      "/users/login",
-      false,
-      { email, password },
-      (data) => {
-        const token = data?.token;
-        if (!token) {
-          return errorToast("Token no recibido del servidor");
-        }
+    try {
+      const data = await post("/users/login", false, { email, password });
 
-        localStorage.setItem("cine-tup-token", token);
-        localStorage.setItem("userId", data.user.id);
-        onLogin(token);
+      const token = data?.token;
+      if (!token) {
+        return errorToast("Token no recibido del servidor.");
+      }
 
-        setEmail('');
-        setPassword('');
-        navigate('/peliculas');
-      },
-      (err) => errorToast(err.message || "Error al iniciar sesión")
-    );
-  };
+      localStorage.setItem("cine-tup-token", token);
+      localStorage.setItem("userId", data.user.id);
+      onLogin(token);
+
+      setEmail('');
+      setPassword('');
+
+      navigate('/peliculas');
+      } catch (err) {
+        console.error("Login error:", err);
+        errorToast(err.message || "Error al iniciar sesión")
+      }
+    };
 
   return (
     <AuthContainer>
