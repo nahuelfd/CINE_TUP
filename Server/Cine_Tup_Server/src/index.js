@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import cors from "cors";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,17 +26,24 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+app.use(cors());
+
+
 app.use(express.json());
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   next();
-});
+});*/
 
 app.use(movieRoutes);
 app.use(userRoutes);
 app.use(ticketRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Ruta no encontrada" });
+});
 
 try {
   await sequelize.sync();
