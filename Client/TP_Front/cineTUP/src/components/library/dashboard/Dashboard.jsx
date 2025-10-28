@@ -1,9 +1,11 @@
 import MovieList from "../movieList/MovieList";
 import { useState, useEffect } from "react";
 import AddMovie from "../../movie/AddMovie";
+import { jwtDecode } from "jwt-decode";
 
 const Dashboard = () => {
   const [movies, setMovies] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const fetchMovies = async () => {
     try {
@@ -32,6 +34,19 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchMovies();
+
+    // Verificar rol del usuario
+    const token = localStorage.getItem("cine-tup-token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const role = decoded.role; // asumir que el payload tiene "role"
+        setIsAdmin(role === "admin" || role === "sysadmin");
+      } catch (err) {
+        console.error("Error decodificando token:", err);
+        setIsAdmin(false);
+      }
+    }
   }, []);
 
   const handleMovieAdded = async () => {
@@ -42,14 +57,12 @@ const Dashboard = () => {
     await fetchMovies();
   };
 
-  const isLoggedIn = !!localStorage.getItem("cine-tup-token");
-
   return (
     <div className="dashboard-page">
-      {isLoggedIn && <AddMovie onMovieAdded={handleMovieAdded} />}
+      {isAdmin && <AddMovie onMovieAdded={handleMovieAdded} />}
 
       <h1 className="fw-bold text-center mt-4">PELÍCULAS EN CARTELERA</h1>
-      <MovieList movies={movies} onMovieDeleted={handleMovieDeleted}/>
+      <MovieList movies={movies} onMovieDeleted={handleMovieDeleted} isAdmin={isAdmin}/>
     </div>
   );
 };
