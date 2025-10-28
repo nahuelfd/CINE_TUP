@@ -7,6 +7,7 @@ import NavBar from './components/navBar/NavBar';
 import Home from './components/home/Home'
 import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
+import EditProfile from "./components/editProfile/EditProfile";
 import AllMovies from './components/borrador/borrador'
 import ProtectedRoute from "./components/protectedRoutes/ProtectedRoute";
 import Forbidden from "./components/error/Forbidden";
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<EditProfile />} />
           <Route path="/peliculas" element={<Dashboard />} />
           <Route path="/estrenos" element={<Releases />} />
           <Route path="/borrador" element={<AllMovies />} />
