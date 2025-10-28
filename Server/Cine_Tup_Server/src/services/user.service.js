@@ -38,7 +38,6 @@ export const register = async (req, res) => {
     const payload = { id: newUser.id, email: newUser.email, role: newUser.role };
     const token = jwt.sign(payload, config.jwtSecret, { expiresIn: config.jwtExpiration });
 
-
     return res.status(201).json({
       message: `El usuario ${name} se ha registrado correctamente.`,
       token,

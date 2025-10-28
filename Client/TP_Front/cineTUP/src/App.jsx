@@ -7,9 +7,12 @@ import NavBar from './components/navBar/NavBar';
 import Home from './components/home/Home'
 import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
+import EditProfile from "./components/profile/EditProfile";
 import AllMovies from './components/borrador/borrador'
-
+import ProtectedRoute from "./components/protectedRoutes/ProtectedRoute";
+import Forbidden from "./components/error/Forbidden";
 import SysadminPanel from './components/protectedRoutes/SysadminPanel';
+import ErrorNotFound from './components/error/ErrorNotFound';
 
 function App() {
   return (
@@ -20,11 +23,28 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<EditProfile />} />
           <Route path="/peliculas" element={<Dashboard />} />
           <Route path="/estrenos" element={<Releases />} />
-          <Route path="/peliculas/:id" element={<MovieTickets />} />
           <Route path="/borrador" element={<AllMovies />} />
-          <Route path="/sysadminPanel" element={<SysadminPanel />} />
+          <Route
+            path="/peliculas/:id"
+            element={
+              <ProtectedRoute allowedRoles={["user", "admin", "sysadmin"]}>
+                <MovieTickets />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sysadminPanel"
+            element={
+              <ProtectedRoute allowedRoles={["sysadmin"]}>
+                <SysadminPanel />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/403" element={<Forbidden />} />
+          <Route path="*" element={<ErrorNotFound />} />
         </Routes>
       </div>
     </BrowserRouter>

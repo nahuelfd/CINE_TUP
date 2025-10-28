@@ -4,16 +4,28 @@ import { Card, Col, Form, Row, Button } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "./AddMovie.css";
 
-const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
-  const [title, setTitle] = useState(movie?.title || "");
-  const [director, setDirector] = useState(movie?.director || "");
-  const [category, setCategory] = useState(movie?.category || "");
-  const [summary, setSummary] = useState(movie?.summary || "");
-  const [imageUrl, setImageUrl] = useState(movie?.imageUrl || "");
-  const [bannerUrl, setBannerUrl] = useState(movie?.bannerUrl || "");
-  const [duration, setDuration] = useState(movie?.duration || "");
-  const [language, setLanguage] = useState(movie?.language || "");
-  const [isAvailable, setIsAvailable] = useState(movie?.isAvailable || false);
+const MovieForm = ({ onMovieAdded }) => {
+  const [title, setTitle] = useState("");
+  const [director, setDirector] = useState("");
+  const [category, setCategory] = useState("");
+  const [summary, setSummary] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [bannerUrl, setBannerUrl] = useState("");
+  const [duration, setDuration] = useState("");
+  const [language, setLanguage] = useState("");
+  const [isAvailable, setIsAvailable] = useState(false);
+  const [showtimes, setShowtimes] = useState(initShowtimes);
+  const [occupied, setOccupied] = useState([]);
+  const navigate = useNavigate();
+  
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const firstWithDate = (movie?.showtimes || []).find(
+      (s) => typeof s === "object" && s.date
+    );
+    if (firstWithDate) return new Date(firstWithDate.date);
+    return new Date();
+  });
+  
 
   const initShowtimes = () => {
     const raw = movie?.showtimes || [];
@@ -23,18 +35,6 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
         : { date: s?.date || null, time: s?.time }
     );
   };
-
-  const [showtimes, setShowtimes] = useState(initShowtimes);
-  const [occupied, setOccupied] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const firstWithDate = (movie?.showtimes || []).find(
-      (s) => typeof s === "object" && s.date
-    );
-    if (firstWithDate) return new Date(firstWithDate.date);
-    return new Date();
-  });
-
-  const navigate = useNavigate();
 
   const toMinutes = (dateStr, timeStr) => {
     const date = new Date(`${dateStr}T${timeStr}:00`);
@@ -72,6 +72,12 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Validación extra
+    if (!title || !director || !category || !language || !summary || !duration || !imageUrl || !bannerUrl || showtimes.length === 0) {
+      alert("Todos los campos son obligatorios.");
+      return;
+    }
+
     const newMovie = {
       title,
       director,
@@ -79,26 +85,21 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       summary,
       imageUrl,
       bannerUrl,
-      duration: duration ? parseInt(duration, 10) : null,
+      duration: parseInt(duration, 10),
       language,
       isAvailable,
       showtimes: showtimes.map((s) => ({ date: s.date, time: s.time })),
     };
 
     try {
-      const res = await fetch(
-        isEditing
-          ? `http://localhost:3000/movies/${movie.id}`
-          : "http://localhost:3000/movies",
-        {
-          method: isEditing ? "PUT" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("cine-tup-token")}`,
-          },
-          body: JSON.stringify(newMovie),
-        }
-      );
+      const res = await fetch("http://localhost:3000/movies", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("cine-tup-token")}`,
+        },
+        body: JSON.stringify(newMovie),
+      });
 
       const data = await res.json();
 
@@ -110,20 +111,13 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       onMovieAdded();
       alert("Película agregada con éxito");
 
-      if (!isEditing) {
-        setTitle("");
-        setDirector("");
-        setCategory("");
-        setSummary("");
-        setImageUrl("");
-        setBannerUrl("");
-        setDuration("");
-        setLanguage("");
-        setIsAvailable(false);
-        setShowtimes([]);
-      }
+      // Limpiar formulario
+      setTitle(""); setDirector(""); setCategory(""); setSummary("");
+      setImageUrl(""); setBannerUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
+      setShowtimes([]);
+
     } catch (err) {
-      console.error("Error creando/actualizando película:", err);
+      console.error("Error creando película:", err);
       alert("Error inesperado al guardar la película");
     }
   };
@@ -196,7 +190,8 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   type="text"
                   placeholder="Ingresar título"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={e => setTitle(e.target.value)}
+                  required
                 />
               </Form.Group>
             </Col>
@@ -209,38 +204,41 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   type="text"
                   placeholder="Ingresar director"
                   value={director}
-                  onChange={(e) => setDirector(e.target.value)}
+                  onChange={e => setDirector(e.target.value)}
+                  required
                 />
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="category">
-                <Form.Label>Categoría</Form.Label>
+                <Form.Label>Categoría<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar categoría"
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  onChange={e => setCategory(e.target.value)}
+                  required
                 />
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="language">
-                <Form.Label>Idioma</Form.Label>
+                <Form.Label>Idioma<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar idioma"
                   value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
+                  onChange={e => setLanguage(e.target.value)}
+                  required
                 />
               </Form.Group>
             </Col>
 
             <Col md={12}>
               <Form.Group className="mb-3" controlId="summary">
-                <Form.Label>Resumen</Form.Label>
+                <Form.Label>Resumen<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
@@ -307,7 +305,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
 
             <Col md={12}>
               <Form.Group className="mb-3" controlId="showtimes">
-                <Form.Label>Horarios de Función</Form.Label>
+                <Form.Label>Horarios de Función<span className="text-danger">*</span></Form.Label>
                 <div className="d-flex flex-wrap align-items-center gap-2">
                   <Form.Select
                     onChange={(e) => {
@@ -316,6 +314,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                       e.target.value = "";
                     }}
                     value=""
+                    
                   >
                     <option value="">Seleccionar horario...</option>
                     {allTimes.map((t) => {
@@ -340,7 +339,6 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                       );
                     })}
                   </Form.Select>
-
 
                   <div className="d-flex flex-wrap gap-2 mt-2">
                     {showtimes.map((s) => (
@@ -368,24 +366,26 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="imageUrl">
-                <Form.Label>URL de Imagen</Form.Label>
+                <Form.Label>URL de Imagen<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar URL de imagen"
                   value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
+                  onChange={e => setImageUrl(e.target.value)}
+                  required
                 />
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="bannerUrl">
-                <Form.Label>URL de Banner</Form.Label>
+                <Form.Label>URL de Banner<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar URL del banner"
                   value={bannerUrl}
-                  onChange={(e) => setBannerUrl(e.target.value)}
+                  onChange={e => setBannerUrl(e.target.value)}
+                  required
                 />
               </Form.Group>
             </Col>
@@ -412,9 +412,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
               >
                 Volver
               </Button>
-              <Button type="submit">
-                {isEditing ? "Editar Película" : "Agregar Película"}
-              </Button>
+              <Button type="submit">Agregar Película</Button>
             </Col>
           </Row>
         </Form>
