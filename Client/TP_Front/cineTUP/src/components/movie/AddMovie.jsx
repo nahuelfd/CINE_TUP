@@ -24,18 +24,17 @@ const MovieForm = ({ onMovieAdded, movie }) => {
   const [bannerUrl, setBannerUrl] = useState("");
   const [duration, setDuration] = useState("");
   const [language, setLanguage] = useState("");
-  const [isAvailable, setIsAvailable] = useState(false);
   const [showtimes, setShowtimes] = useState(initShowtimes);
   const [occupied, setOccupied] = useState([]);
+  const [movies, setMovies] = useState([]);
+
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const firstWithDate = (movie?.showtimes || []).find(
       (s) => typeof s === "object" && s.date
     );
-    if (firstWithDate) return new Date(firstWithDate.date);
-    return new Date();
+    return firstWithDate ? new Date(firstWithDate.date) : null;
   });
-
 
   const toMinutes = (dateStr, timeStr) => {
     const date = new Date(`${dateStr}T${timeStr}:00`);
@@ -54,6 +53,10 @@ const MovieForm = ({ onMovieAdded, movie }) => {
 
   useEffect(() => {
     const loadOccupiedTimes = async () => {
+      if (!selectedDate) {
+        setOccupied([]);
+        return;
+      }
       try {
         const dateStr = formatDate(selectedDate);
         const res = await fetch(
@@ -70,13 +73,74 @@ const MovieForm = ({ onMovieAdded, movie }) => {
     loadOccupiedTimes();
   }, [selectedDate]);
 
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/movies");
+        const data = await res.json();
+        setMovies(data || []);
+      } catch (err) {
+        console.error("Error cargando películas:", err);
+      }
+    };
+    fetchMovies();
+  }, []);
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validación extra
-    if (!title || !director || !category || !language || !summary || !duration || !imageUrl || !bannerUrl || showtimes.length === 0) {
+    if (
+      !title ||
+      !director ||
+      !category ||
+      !language ||
+      !summary ||
+      !duration ||
+      !imageUrl ||
+      !bannerUrl
+    ) {
       alert("Todos los campos son obligatorios.");
       return;
+    }
+
+    const exist = movies.some(
+      (m) => m.title.toLowerCase().trim() === title.toLowerCase().trim()
+    );
+    if (exist) {
+      alert(
+        "Ya existe una película cargada con este título."
+      );
+      return;
+    }
+
+    const tieneFecha = showtimes.some((s) => s.date);
+    const tieneHorario = showtimes.some((s) => s.time);
+
+    if (tieneFecha && !tieneHorario) {
+      alert(
+        "Seleccionaste una fecha pero no un horario. Debes completar ambos para cargarla en Cartelera."
+      );
+      return;
+    }
+
+    if (!tieneFecha && tieneHorario) {
+      alert(
+        "Seleccionaste un horario pero no una fecha. Debes completar ambos para cargarla en Cartelera."
+      );
+      return;
+    }
+
+    let isAvailable = false;
+
+    if (tieneFecha && tieneHorario) {
+      isAvailable = true;
+    } else if (!tieneFecha && !tieneHorario) {
+      const confirmEstreno = window.confirm(
+        "No seleccionaste fecha ni horario.\n¿Deseas cargar esta película como 'Próximo Estreno'?"
+      );
+      if (!confirmEstreno) return;
+      isAvailable = false;
     }
 
     const newMovie = {
@@ -97,7 +161,7 @@ const MovieForm = ({ onMovieAdded, movie }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("cine-tup-token")}`,
+          Authorization: `Bearer ${localStorage.getItem("cine-tup-token")}`,
         },
         body: JSON.stringify(newMovie),
       });
@@ -112,11 +176,16 @@ const MovieForm = ({ onMovieAdded, movie }) => {
       onMovieAdded();
       alert("Película agregada con éxito");
 
-      // Limpiar formulario
-      setTitle(""); setDirector(""); setCategory(""); setSummary("");
-      setImageUrl(""); setBannerUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
+      setTitle("");
+      setDirector("");
+      setCategory("");
+      setSummary("");
+      setImageUrl("");
+      setBannerUrl("");
+      setDuration("");
+      setLanguage("");
       setShowtimes([]);
-
+      setSelectedDate(null);
     } catch (err) {
       console.error("Error creando película:", err);
       alert("Error inesperado al guardar la película");
@@ -135,6 +204,11 @@ const MovieForm = ({ onMovieAdded, movie }) => {
   const allTimes = generateTimeSlots();
 
   const handleAddShowtime = (time) => {
+    if (!selectedDate) {
+      alert("Primero selecciona una fecha para agregar un horario.");
+      return;
+    }
+
     if (!duration) {
       alert("Primero ingresa la duración de la película.");
       return;
@@ -144,7 +218,6 @@ const MovieForm = ({ onMovieAdded, movie }) => {
     const newStart = toMinutes(dateStr, time);
     const newEnd = newStart + parseInt(duration, 10);
 
-    // 🚫 Verificar solapamiento dentro de la misma película (todas las fechas)
     for (const s of showtimes) {
       const sStart = toMinutes(s.date, s.time);
       const sEnd = sStart + parseInt(duration, 10);
@@ -156,7 +229,6 @@ const MovieForm = ({ onMovieAdded, movie }) => {
       }
     }
 
-    // 🚫 Verificar solapamiento con otras películas (ya ocupados)
     const isOccupied = occupied.some((o) => {
       const occStart = toMinutes(o.date, o.time);
       const occEnd = occStart + parseInt(duration, 10);
@@ -177,6 +249,12 @@ const MovieForm = ({ onMovieAdded, movie }) => {
 
   const handleGoBack = () => navigate("/");
 
+  const inputStyle = {
+    backgroundColor: "#222",
+    color: "white",
+    border: "1px solid #555",
+  };
+
   return (
     <Card className="movie-form-card mb-5 w-100">
       <Card.Body>
@@ -191,11 +269,12 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                   type="text"
                   placeholder="Ingresar título"
                   value={title}
-                  onChange={e => setTitle(e.target.value)}
-                  required
+                  onChange={(e) => setTitle(e.target.value)}
+                  style={inputStyle}
                 />
               </Form.Group>
             </Col>
+
             <Col md={6}>
               <Form.Group className="mb-3" controlId="director">
                 <Form.Label>
@@ -205,47 +284,54 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                   type="text"
                   placeholder="Ingresar director"
                   value={director}
-                  onChange={e => setDirector(e.target.value)}
-                  required
+                  onChange={(e) => setDirector(e.target.value)}
+                  style={inputStyle}
                 />
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="category">
-                <Form.Label>Categoría<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Categoría<span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar categoría"
                   value={category}
-                  onChange={e => setCategory(e.target.value)}
-                  required
+                  onChange={(e) => setCategory(e.target.value)}
+                  style={inputStyle}
                 />
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="language">
-                <Form.Label>Idioma<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Idioma<span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar idioma"
                   value={language}
-                  onChange={e => setLanguage(e.target.value)}
-                  required
+                  onChange={(e) => setLanguage(e.target.value)}
+                  style={inputStyle}
                 />
               </Form.Group>
             </Col>
 
             <Col md={12}>
               <Form.Group className="mb-3" controlId="summary">
-                <Form.Label>Resumen<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Resumen<span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
                   placeholder="Ingresar resumen"
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
+                  style={inputStyle}
                 />
               </Form.Group>
             </Col>
@@ -259,7 +345,7 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                     placeholder="Ingresar duración"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    style={{ maxWidth: "150px", marginLeft: "20px" }}
+                    style={{ ...inputStyle, maxWidth: "150px", marginLeft: "20px" }}
                   />
                 </Form.Group>
               </Col>
@@ -277,23 +363,25 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                         month: "short",
                       });
 
+                      const isSelected =
+                        selectedDate &&
+                        selectedDate.toDateString() === date.toDateString();
+
                       return (
                         <div
                           key={i}
-                          className={`date-block ${selectedDate.toDateString() ===
-                            date.toDateString()
-                            ? "selected"
-                            : ""
-                            }`}
-                          onClick={() =>
-                            setSelectedDate(
-                              new Date(
-                                date.getFullYear(),
-                                date.getMonth(),
-                                date.getDate()
-                              )
-                            )
-                          }
+                          className={`date-block ${isSelected ? "selected" : ""}`}
+                          onClick={() => {
+                            if (isSelected) setSelectedDate(null);
+                            else
+                              setSelectedDate(
+                                new Date(
+                                  date.getFullYear(),
+                                  date.getMonth(),
+                                  date.getDate()
+                                )
+                              );
+                          }}
                         >
                           {label}
                         </div>
@@ -306,7 +394,9 @@ const MovieForm = ({ onMovieAdded, movie }) => {
 
             <Col md={12}>
               <Form.Group className="mb-3" controlId="showtimes">
-                <Form.Label>Horarios de Función<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Horarios de Función<span className="text-danger">*</span>
+                </Form.Label>
                 <div className="d-flex flex-wrap align-items-center gap-2">
                   <Form.Select
                     onChange={(e) => {
@@ -315,10 +405,11 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                       e.target.value = "";
                     }}
                     value=""
-
+                    style={inputStyle}
                   >
                     <option value="">Seleccionar horario...</option>
                     {allTimes.map((t) => {
+                      if (!selectedDate) return <option key={t} value={t}>{t}</option>;
                       const dateStr = formatDate(selectedDate);
                       const durationInt = parseInt(duration, 10) || 0;
 
@@ -327,7 +418,8 @@ const MovieForm = ({ onMovieAdded, movie }) => {
 
                       const conflicto = occupied.find((o) => {
                         const occStart = toMinutes(o.date, o.time);
-                        const occEnd = occStart + parseInt(o.duration || durationInt, 10);
+                        const occEnd =
+                          occStart + parseInt(o.duration || durationInt, 10);
                         return rangesOverlap(newStart, newEnd, occStart, occEnd);
                       });
 
@@ -352,9 +444,7 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                           variant="link"
                           size="sm"
                           className="ms-1 p-0"
-                          onClick={() =>
-                            handleRemoveShowtime(s.time, s.date)
-                          }
+                          onClick={() => handleRemoveShowtime(s.time, s.date)}
                         >
                           ❌
                         </Button>
@@ -362,31 +452,39 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                     ))}
                   </div>
                 </div>
+                <Form.Text className="text-secondary small mt-1 d-block">
+                  💡 Si no seleccionas fecha ni horario, la película se cargará
+                  automáticamente en <strong>Próximos Estrenos</strong>.
+                </Form.Text>
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="imageUrl">
-                <Form.Label>URL de Imagen<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  URL de Imagen<span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar URL de imagen"
                   value={imageUrl}
-                  onChange={e => setImageUrl(e.target.value)}
-                  required
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  style={inputStyle}
                 />
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3" controlId="bannerUrl">
-                <Form.Label>URL de Banner<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  URL de Banner<span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar URL del banner"
                   value={bannerUrl}
-                  onChange={e => setBannerUrl(e.target.value)}
-                  required
+                  onChange={(e) => setBannerUrl(e.target.value)}
+                  style={inputStyle}
                 />
               </Form.Group>
             </Col>
@@ -397,14 +495,6 @@ const MovieForm = ({ onMovieAdded, movie }) => {
               md={3}
               className="d-flex flex-column justify-content-end align-items-end"
             >
-              <Form.Check
-                type="switch"
-                id="available"
-                className="mb-3"
-                label="¿Disponible?"
-                checked={isAvailable}
-                onChange={(e) => setIsAvailable(e.target.checked)}
-              />
               <Button
                 variant="secondary"
                 onClick={handleGoBack}

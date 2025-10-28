@@ -26,8 +26,8 @@
 
 /* 🔲 Inputs */
 .movie-form-card .form-control {
-  background-color: #262626;
-  border: 1px solid #444;
+  background-color: #222;
+  border: 1px solid #555;
   color: #fff;
   border-radius: 10px;
   transition: border-color 0.3s ease;
