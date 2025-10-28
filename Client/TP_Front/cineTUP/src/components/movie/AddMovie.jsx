@@ -4,7 +4,18 @@ import { Card, Col, Form, Row, Button } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "./AddMovie.css";
 
-const MovieForm = ({ onMovieAdded }) => {
+const MovieForm = ({ onMovieAdded, movie }) => {
+  const navigate = useNavigate();
+
+  const initShowtimes = () => {
+    const raw = movie?.showtimes || [];
+    return raw.map((s) =>
+      typeof s === "string"
+        ? { date: null, time: s }
+        : { date: s?.date || null, time: s?.time }
+    );
+  };
+
   const [title, setTitle] = useState("");
   const [director, setDirector] = useState("");
   const [category, setCategory] = useState("");
@@ -16,8 +27,7 @@ const MovieForm = ({ onMovieAdded }) => {
   const [isAvailable, setIsAvailable] = useState(false);
   const [showtimes, setShowtimes] = useState(initShowtimes);
   const [occupied, setOccupied] = useState([]);
-  const navigate = useNavigate();
-  
+
   const [selectedDate, setSelectedDate] = useState(() => {
     const firstWithDate = (movie?.showtimes || []).find(
       (s) => typeof s === "object" && s.date
@@ -25,16 +35,7 @@ const MovieForm = ({ onMovieAdded }) => {
     if (firstWithDate) return new Date(firstWithDate.date);
     return new Date();
   });
-  
 
-  const initShowtimes = () => {
-    const raw = movie?.showtimes || [];
-    return raw.map((s) =>
-      typeof s === "string"
-        ? { date: null, time: s }
-        : { date: s?.date || null, time: s?.time }
-    );
-  };
 
   const toMinutes = (dateStr, timeStr) => {
     const date = new Date(`${dateStr}T${timeStr}:00`);
@@ -280,9 +281,9 @@ const MovieForm = ({ onMovieAdded }) => {
                         <div
                           key={i}
                           className={`date-block ${selectedDate.toDateString() ===
-                              date.toDateString()
-                              ? "selected"
-                              : ""
+                            date.toDateString()
+                            ? "selected"
+                            : ""
                             }`}
                           onClick={() =>
                             setSelectedDate(
@@ -314,7 +315,7 @@ const MovieForm = ({ onMovieAdded }) => {
                       e.target.value = "";
                     }}
                     value=""
-                    
+
                   >
                     <option value="">Seleccionar horario...</option>
                     {allTimes.map((t) => {

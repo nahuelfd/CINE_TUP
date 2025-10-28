@@ -89,7 +89,7 @@ const Login = () => {
       setEmail('');
       setPassword('');
 
-      navigate('/peliculas');
+      navigate('/');
       } catch (err) {
         console.error("Login error:", err);
         errorToast(err.message || "Error al iniciar sesión")
