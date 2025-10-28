@@ -26,24 +26,23 @@ const SysadminPanel = () => {
   const [roleModalVariant, setRoleModalVariant] = useState("success");
 
   useEffect(() => {
-    if (role !== "sysadmin") {
-      navigate("/"); // Redirige si no es sysadmin
-      return;
+  if (role !== "sysadmin") {
+    navigate("/");
+    return;
+  }
+
+  const loadUsers = async () => {
+    try {
+      const data = await get("/users", true);
+      setUsers(data);
+    } catch (err) {
+      console.error("Error cargando usuarios:", err);
+      setError(err.message || "Error al cargar usuarios");
     }
-
-    get(
-      "/users",
-      true,
-      (data) => setUsers(data),
-      (err) => setError(err.message || "Error al cargar usuarios")
-    );
-  }, [role]);
-
-  // 🔹 Intento de cambio de rol: abre modal de confirmación
-  const handleRoleChange = (userId, newRole) => {
-    setPendingRoleChange({ userId, newRole });
-    setShowConfirmRoleModal(true);
   };
+
+  loadUsers();
+}, [role]);
 
   // 🔹 Ejecuta el cambio de rol confirmado
   const confirmRoleChange = async () => {
