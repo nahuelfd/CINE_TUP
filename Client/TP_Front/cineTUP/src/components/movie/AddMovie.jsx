@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Card, Col, Form, Row, Button } from "react-bootstrap";
 import "./AddMovie.css"
@@ -13,8 +13,33 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [duration, setDuration] = useState(movie?.duration || "");
   const [language, setLanguage] = useState(movie?.language || "");
   const [isAvailable, setIsAvailable] = useState(movie?.isAvailable || false);
-
+  const [showtimes, setShowtimes] = useState(movie?.showtimes || []);
+  const [occupied, setOccupied] = useState([]);
   const navigate = useNavigate();
+
+  const toMinutes = (t) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const rangesOverlap = (aStart, aEnd, bStart, bEnd) => aStart < bEnd && aEnd > bStart;
+
+
+  useEffect(() => {
+    const loadOccupiedTimes = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/movies/occupied-times");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setOccupied(Array.isArray(data) ? data : []); // 🔹 asegura que siempre sea un array
+      } catch (err) {
+        console.error("Error cargando horarios ocupados:", err);
+        setOccupied([]); // 🔹 evita que sea undefined
+      }
+    };
+    loadOccupiedTimes();
+  }, []);
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,7 +53,8 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       bannerUrl,
       duration: duration ? parseInt(duration, 10) : null,
       language,
-      isAvailable
+      isAvailable,
+      showtimes
     };
 
     try {
@@ -47,14 +73,77 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       );
 
       const data = await res.json();
-      onMovieAdded(); // refresca la lista
+
+      if (!res.ok) {
+        alert(data.message || "Error al guardar la película");
+        return;
+      }
+
+      onMovieAdded();
+      alert("Película agregada con éxito");
+
       if (!isEditing) {
         setTitle(""); setDirector(""); setCategory(""); setSummary("");
-        setImageUrl("");setBannerUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
+        setImageUrl(""); setBannerUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
+        setShowtimes([]);
       }
+
     } catch (err) {
       console.error("Error creando/actualizando película:", err);
+      alert("Error inesperado al guardar la película");
     }
+
+  };
+
+  const generateTimeSlots = () => {
+    const times = [];
+    for (let h = 0; h < 24; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const hour = h.toString().padStart(2, "0");
+        const minute = m.toString().padStart(2, "0");
+        times.push(`${hour}:${minute}`);
+      }
+    }
+    return times;
+  };
+
+  const allTimes = generateTimeSlots();
+
+  const freeTimes = allTimes.filter(time => {
+    if (!duration) return true;
+    const start = toMinutes(time);
+    const end = start + parseInt(duration, 10);
+
+    if (!Array.isArray(occupied)) return true;
+
+    return !occupied.some(o => rangesOverlap(start, end, o.start, o.end));
+  });
+
+  const handleAddShowtime = (time) => {
+    if (!duration) {
+      alert("Primero ingresa la duración de la película.");
+      return;
+    }
+
+    const newStart = toMinutes(time);
+    const newEnd = newStart + parseInt(duration);
+
+    const hasOverlap = showtimes.some((t) => {
+      const existingStart = toMinutes(t);
+      const existingEnd = existingStart + parseInt(duration);
+      return rangesOverlap(newStart, newEnd, existingStart, existingEnd);
+    });
+
+    if (hasOverlap) {
+      alert("Este horario se solapa con otra función seleccionada.");
+      return;
+    }
+
+    setShowtimes([...showtimes, time]);
+  };
+
+  const handleRemoveShowtime = (time) => {
+    setShowtimes(showtimes.filter((t) => t !== time));
   };
 
   const handleGoBack = () => navigate("/");
@@ -131,6 +220,48 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                 />
               </Form.Group>
             </Col>
+            <Col md={12}>
+              <Form.Group className="mb-3" controlId="showtimes">
+                <Form.Label>Horarios de Función</Form.Label>
+                <div className="d-flex flex-wrap align-items-center gap-2">
+                  <Form.Select
+                    onChange={(e) => handleAddShowtime(e.target.value)}
+                    value=""
+                  >
+                    <option value="">Seleccionar horario...</option>
+                    {allTimes.map((t) => {
+                      const start = toMinutes(t);
+                      const end = start + parseInt(duration || 0);
+                      const isOccupied = occupied.some(o => rangesOverlap(start, end, o.start, o.end));
+
+                      return (
+                        <option key={t} value={t} disabled={isOccupied}>
+                          {t} {isOccupied ? "⛔ (Ocupado)" : ""}
+                        </option>
+                      );
+                    })}
+                  </Form.Select>
+
+
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    {showtimes.map((t) => (
+                      <span key={t} className="badge bg-info text-dark">
+                        {t}
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="ms-1 p-0"
+                          onClick={() => handleRemoveShowtime(t)}
+                        >
+                          ❌
+                        </Button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Form.Group>
+            </Col>
+
             <Col md={6}>
               <Form.Group className="mb-3" controlId="imageUrl">
                 <Form.Label>URL de Imagen</Form.Label>
