@@ -18,12 +18,21 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar />
-      <div className='app-container'>
+      <div className="app-container">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<EditProfile />} />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/peliculas" element={<Dashboard />} />
           <Route path="/estrenos" element={<Releases />} />
           <Route path="/borrador" element={<AllMovies />} />
@@ -35,6 +44,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/sysadminPanel"
             element={
@@ -43,6 +53,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route path="/403" element={<Forbidden />} />
           <Route path="*" element={<ErrorNotFound />} />
         </Routes>
