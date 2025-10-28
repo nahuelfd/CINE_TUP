@@ -8,11 +8,12 @@ import Home from './components/home/Home'
 import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
 import EditProfile from "./components/profile/EditProfile";
-import AllMovies from './components/borrador/borrador'
 import ProtectedRoute from "./components/protectedRoutes/ProtectedRoute";
 import Forbidden from "./components/error/Forbidden";
 import SysadminPanel from './components/protectedRoutes/SysadminPanel';
 import ErrorNotFound from './components/error/ErrorNotFound';
+import EditMovieForm from './components/editMovie/EditMovieForm';
+import EditMovieList from './components/editMovie/EditMovieList';
 
 function App() {
   return (
@@ -26,7 +27,24 @@ function App() {
           <Route path="/profile" element={<EditProfile />} />
           <Route path="/peliculas" element={<Dashboard />} />
           <Route path="/estrenos" element={<Releases />} />
-          <Route path="/borrador" element={<AllMovies />} />
+
+          <Route
+            path="/editar"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "sysadmin"]}>
+                <EditMovieList />
+              </ProtectedRoute>
+            } />
+
+          <Route
+            path="/editar/:id"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "sysadmin"]}>
+                <EditMovieForm />
+              </ProtectedRoute>
+            } />
+
+            
           <Route
             path="/peliculas/:id"
             element={

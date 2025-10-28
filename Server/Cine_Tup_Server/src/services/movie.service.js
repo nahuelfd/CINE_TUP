@@ -1,6 +1,7 @@
 import { Movie } from "../entities/Movie.js";
 import { Ticket } from "../entities/Ticket.js";
 import { ERROR_CODE } from "../errorCodes.js";
+import { Op } from "sequelize";
 
 // 🧩 Convierte fecha + hora a minutos absolutos desde epoch
 const toAbsoluteMinutes = (dateStr, timeStr) => {
@@ -208,7 +209,7 @@ export const updateMovie = async (req, res) => {
       .map((s) => normalizeShowItem(s, null))
       .filter(Boolean);
 
-    // 🆕 Validación interna dentro de la misma película (en update)
+    // Validación interna de solapamientos dentro de la misma película
     for (let i = 0; i < newShowtimes.length; i++) {
       const a = newShowtimes[i];
       if (!a.date) continue;
@@ -229,9 +230,9 @@ export const updateMovie = async (req, res) => {
       }
     }
 
-    // 🧩 Validación contra otras películas
+    // Validación contra otras películas
     const allMovies = await Movie.findAll({
-      where: { id: { [Movie.sequelize.Op.ne]: movie.id } },
+      where: { id: { [Op.ne]: movie.id } },
     });
 
     for (const other of allMovies) {
@@ -270,6 +271,7 @@ export const updateMovie = async (req, res) => {
       }
     }
 
+    // Actualizar película
     await movie.update({
       title,
       director,
@@ -282,6 +284,31 @@ export const updateMovie = async (req, res) => {
       isAvailable,
       showtimes: newShowtimes,
     });
+
+    // Crear tickets si la película es disponible
+    if (isAvailable && newShowtimes.length > 0) {
+      const rows = ["A", "B", "C", "D", "E"];
+      const seatsPerRow = 10;
+      const tickets = [];
+
+      for (const s of newShowtimes) {
+        const time = s.time;
+        for (const row of rows) {
+          for (let i = 1; i <= seatsPerRow; i++) {
+            tickets.push({
+              seatNumber: `${row}${i}`,
+              price: 10000,
+              movieId: movie.id,
+              isAvailable: true,
+              showtime: time,
+              showDate: s.date || null,
+            });
+          }
+        }
+      }
+
+      if (tickets.length) await Ticket.bulkCreate(tickets);
+    }
 
     res.json(movie);
   } catch (err) {

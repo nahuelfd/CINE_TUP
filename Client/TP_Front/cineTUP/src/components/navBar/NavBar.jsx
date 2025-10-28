@@ -13,6 +13,10 @@ const NavBar = () => {
     navigate("/profile");
   };
 
+  const handleEditFilmClick = () => {
+    navigate("/editar");
+  };
+
   const handleAdminClick = () => {
     navigate("/sysadminPanel"); 
   };
@@ -82,6 +86,16 @@ const NavBar = () => {
                     className="fw-bold rounded-pill px-3"
                   >
                     👤 Perfil
+                  </Button>
+                )}
+
+                {(role === "admin" || role == "sysadmin") && (
+                  <Button
+                    onClick={handleEditFilmClick}
+                    variant={theme === "dark" ? "outline-light" : "outline-dark"}
+                    className="fw-bold rounded-pill px-3"
+                  >
+                    🎥 Editar Peliculas
                   </Button>
                 )}
 
