@@ -16,6 +16,9 @@ const SysadminPanel = () => {
   // 🔹 Modales de eliminación
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showDeletedModal, setShowDeletedModal] = useState(false);
+  const [deletedModalMessage, setDeletedModalMessage] = useState("");
+  const [deletedModalVariant, setDeletedModalVariant] = useState("success");
 
   // 🔹 Modal de confirmación de cambio de rol
   const [showConfirmRoleModal, setShowConfirmRoleModal] = useState(false);
@@ -180,29 +183,40 @@ const SysadminPanel = () => {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = () => {
-    if (!selectedUser) return;
+  const handleConfirmDelete = async () => {
+  if (!selectedUser) return;
 
-    fetch(`${import.meta.env.VITE_APP_API_URL}/users/${selectedUser.id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.message || "Error al eliminar usuario");
-        }
-        setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
-        setShowDeleteModal(false);
-        setSelectedUser(null);
-      })
-      .catch((err) => {
-        setError(err.message || "Error al eliminar usuario");
-        setShowDeleteModal(false);
-      });
-  };
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_APP_API_URL}/users/${selectedUser.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json(); // Leemos el mensaje del backend
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al eliminar usuario");
+    }
+
+    setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
+    setShowDeleteModal(false);
+    setDeletedModalMessage(data.message); // usamos el mensaje que devuelve el backend
+    setDeletedModalVariant("success");
+    setShowDeletedModal(true);
+    setSelectedUser(null);
+  } catch (err) {
+    console.error(err);
+    setShowDeleteModal(false);
+    setDeletedModalMessage(err.message || "Error al eliminar usuario");
+    setDeletedModalVariant("danger");
+    setShowDeletedModal(true);
+  }
+};
 
   if (!token) return <Alert variant="danger">No autorizado</Alert>;
 
@@ -285,6 +299,25 @@ const SysadminPanel = () => {
               </Button>
               <Button variant="danger" onClick={handleConfirmDelete}>
                 Eliminar definitivamente
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          <Modal
+            show={showDeletedModal}
+            onHide={() => setShowDeletedModal(false)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>{deletedModalVariant === "success" ? "Usuario eliminado" : "Error"}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{deletedModalMessage}</Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant={deletedModalVariant === "success" ? "success" : "danger"}
+                onClick={() => setShowDeletedModal(false)}
+              >
+                Cerrar
               </Button>
             </Modal.Footer>
           </Modal>
