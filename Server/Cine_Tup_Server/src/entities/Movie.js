@@ -44,4 +44,5 @@ export const Movie = sequelize.define("movie", {
     },
 
 
+
 }, { timestamps: false })

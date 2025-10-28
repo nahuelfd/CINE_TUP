@@ -92,8 +92,16 @@ const MovieTickets = () => {
 
   if (isLoading || !movie) return <div className="movie-tickets__loading">Cargando...</div>;
 
-  // Filtrar tickets para el horario seleccionado (si hay uno)
-  const filteredTickets = selectedTime ? tickets.filter((t) => t.showtime === selectedTime) : [];
+  const filteredTickets = selectedTime
+    ? tickets.filter((t) => {
+      const date = t.showDate || t.showtime?.date;
+      const time = t.showtime?.time || t.showtime;
+
+      return date === selectedTime.date && time === selectedTime.time;
+    })
+    : [];
+
+
 
   // Agrupar por fila
   const rows = {};
@@ -125,19 +133,23 @@ const MovieTickets = () => {
         <div className="movie-tickets__seats">
           <div className="movie-tickets__showtimes">
             <h3>Seleccionar horario</h3>
-            <div className="showtimes-buttons">
+            <div className="d-flex flex-wrap justify-content-center gap-3">
               {movie.showtimes && movie.showtimes.length > 0 ? (
-                movie.showtimes.map((time) => (
-                  <button
-                    key={time}
-                    className={`showtime-btn ${selectedTime === time ? "active" : ""}`}
+                movie.showtimes.map((s, i) => (
+                  <div
+                    key={`${s.date}-${s.time}-${i}`}
+                    className={`showtime-card ${selectedTime?.date === s.date && selectedTime?.time === s.time
+                        ? "selected"
+                        : ""
+                      }`}
                     onClick={() => {
-                      setSelectedTime(time);
-                      setSelectedSeats([]); // limpiar selección al cambiar horario
+                      setSelectedTime(s);
+                      setSelectedSeats([]);
                     }}
                   >
-                    {time}
-                  </button>
+                    <div className="showtime-time">{s.time} hs</div>
+                    <div className="showtime-date">{s.date}</div>
+                  </div>
                 ))
               ) : (
                 <p>No hay horarios configurados.</p>
@@ -145,8 +157,11 @@ const MovieTickets = () => {
             </div>
           </div>
 
+
+
           <div className="movie-tickets__seat-section">
-            <h2>{selectedTime ? `Asientos para ${selectedTime}` : "Seleccione un horario"}</h2>
+            <h2>Asientos disponibles</h2>
+
 
             {!selectedTime ? (
               <p className="movie-tickets__hint">Selecciona un horario para ver los asientos.</p>

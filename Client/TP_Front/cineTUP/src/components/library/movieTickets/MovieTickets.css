@@ -145,3 +145,96 @@
   border-radius: 10px;
 }
 
+.showtime-card {
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 10px 15px;
+  cursor: pointer;
+  min-width: 110px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.showtime-card:hover {
+  background: #333;
+  border-color: #777;
+}
+.showtime-card.selected {
+  background: #007bff;
+  border-color: #0056b3;
+}
+.showtime-time {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.showtime-date {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+/* ==== FIX LAYOUT ==== */
+.movie-tickets__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.movie-tickets__info {
+  flex: 1 1 320px;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.movie-tickets__poster {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.movie-tickets__seats {
+  flex: 2 1 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.movie-tickets__seat-section {
+  text-align: center;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 10px;
+}
+
+.ticket-btn {
+  min-width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: 1px solid #444;
+  transition: all 0.2s ease;
+}
+.ticket-btn.available:hover {
+  background-color: #007bff;
+  color: white;
+}
+.ticket-btn.selected {
+  background-color: #ffc107;
+  border-color: #ffb300;
+}
+.asientos-titulo {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #007bff;
+  margin-bottom: 1rem;
+}
+

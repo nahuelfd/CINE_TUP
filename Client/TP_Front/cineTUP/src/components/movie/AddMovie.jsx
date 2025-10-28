@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Card, Col, Form, Row, Button } from "react-bootstrap";
-import "./AddMovie.css"
+import "react-datepicker/dist/react-datepicker.css";
+import "./AddMovie.css";
 
 const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [title, setTitle] = useState(movie?.title || "");
@@ -13,33 +14,60 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
   const [duration, setDuration] = useState(movie?.duration || "");
   const [language, setLanguage] = useState(movie?.language || "");
   const [isAvailable, setIsAvailable] = useState(movie?.isAvailable || false);
-  const [showtimes, setShowtimes] = useState(movie?.showtimes || []);
-  const [occupied, setOccupied] = useState([]);
-  const navigate = useNavigate();
 
-  const toMinutes = (t) => {
-    const [h, m] = t.split(":").map(Number);
-    return h * 60 + m;
+  const initShowtimes = () => {
+    const raw = movie?.showtimes || [];
+    return raw.map((s) =>
+      typeof s === "string"
+        ? { date: null, time: s }
+        : { date: s?.date || null, time: s?.time }
+    );
   };
 
-  const rangesOverlap = (aStart, aEnd, bStart, bEnd) => aStart < bEnd && aEnd > bStart;
+  const [showtimes, setShowtimes] = useState(initShowtimes);
+  const [occupied, setOccupied] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const firstWithDate = (movie?.showtimes || []).find(
+      (s) => typeof s === "object" && s.date
+    );
+    if (firstWithDate) return new Date(firstWithDate.date);
+    return new Date();
+  });
 
+  const navigate = useNavigate();
+
+  const toMinutes = (dateStr, timeStr) => {
+    const date = new Date(`${dateStr}T${timeStr}:00`);
+    return date.getTime() / 60000;
+  };
+
+  const rangesOverlap = (aStart, aEnd, bStart, bEnd) =>
+    aStart < bEnd && aEnd > bStart;
+
+  const formatDate = (d) => {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   useEffect(() => {
     const loadOccupiedTimes = async () => {
       try {
-        const res = await fetch("http://localhost:3000/movies/occupied-times");
+        const dateStr = formatDate(selectedDate);
+        const res = await fetch(
+          `http://localhost:3000/movies/occupied-times?date=${dateStr}`
+        );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        setOccupied(Array.isArray(data) ? data : []); // 🔹 asegura que siempre sea un array
+        setOccupied(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error cargando horarios ocupados:", err);
-        setOccupied([]); // 🔹 evita que sea undefined
+        setOccupied([]);
       }
     };
     loadOccupiedTimes();
-  }, []);
-
+  }, [selectedDate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -54,7 +82,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       duration: duration ? parseInt(duration, 10) : null,
       language,
       isAvailable,
-      showtimes
+      showtimes: showtimes.map((s) => ({ date: s.date, time: s.time })),
     };
 
     try {
@@ -66,7 +94,7 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
           method: isEditing ? "PUT" : "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("cine-tup-token")}`,
+            Authorization: `Bearer ${localStorage.getItem("cine-tup-token")}`,
           },
           body: JSON.stringify(newMovie),
         }
@@ -83,41 +111,33 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       alert("Película agregada con éxito");
 
       if (!isEditing) {
-        setTitle(""); setDirector(""); setCategory(""); setSummary("");
-        setImageUrl(""); setBannerUrl(""); setDuration(""); setLanguage(""); setIsAvailable(false);
+        setTitle("");
+        setDirector("");
+        setCategory("");
+        setSummary("");
+        setImageUrl("");
+        setBannerUrl("");
+        setDuration("");
+        setLanguage("");
+        setIsAvailable(false);
         setShowtimes([]);
       }
-
     } catch (err) {
       console.error("Error creando/actualizando película:", err);
       alert("Error inesperado al guardar la película");
     }
-
   };
 
   const generateTimeSlots = () => {
     const times = [];
     for (let h = 0; h < 24; h++) {
-      for (let m = 0; m < 60; m += 30) {
-        const hour = h.toString().padStart(2, "0");
-        const minute = m.toString().padStart(2, "0");
-        times.push(`${hour}:${minute}`);
-      }
+      const hour = h.toString().padStart(2, "0");
+      times.push(`${hour}:00`);
     }
     return times;
   };
 
   const allTimes = generateTimeSlots();
-
-  const freeTimes = allTimes.filter(time => {
-    if (!duration) return true;
-    const start = toMinutes(time);
-    const end = start + parseInt(duration, 10);
-
-    if (!Array.isArray(occupied)) return true;
-
-    return !occupied.some(o => rangesOverlap(start, end, o.start, o.end));
-  });
 
   const handleAddShowtime = (time) => {
     if (!duration) {
@@ -125,25 +145,39 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
       return;
     }
 
-    const newStart = toMinutes(time);
-    const newEnd = newStart + parseInt(duration);
+    const dateStr = formatDate(selectedDate);
+    const newStart = toMinutes(dateStr, time);
+    const newEnd = newStart + parseInt(duration, 10);
 
-    const hasOverlap = showtimes.some((t) => {
-      const existingStart = toMinutes(t);
-      const existingEnd = existingStart + parseInt(duration);
-      return rangesOverlap(newStart, newEnd, existingStart, existingEnd);
+    // 🚫 Verificar solapamiento dentro de la misma película (todas las fechas)
+    for (const s of showtimes) {
+      const sStart = toMinutes(s.date, s.time);
+      const sEnd = sStart + parseInt(duration, 10);
+      if (rangesOverlap(newStart, newEnd, sStart, sEnd)) {
+        alert(
+          `El horario ${time} (${dateStr}) se solapa con ${s.time} (${s.date}).`
+        );
+        return;
+      }
+    }
+
+    // 🚫 Verificar solapamiento con otras películas (ya ocupados)
+    const isOccupied = occupied.some((o) => {
+      const occStart = toMinutes(o.date, o.time);
+      const occEnd = occStart + parseInt(duration, 10);
+      return rangesOverlap(newStart, newEnd, occStart, occEnd);
     });
 
-    if (hasOverlap) {
-      alert("Este horario se solapa con otra función seleccionada.");
+    if (isOccupied) {
+      alert("Ese horario está ocupado por otra película.");
       return;
     }
 
-    setShowtimes([...showtimes, time]);
+    setShowtimes([...showtimes, { date: dateStr, time }]);
   };
 
-  const handleRemoveShowtime = (time) => {
-    setShowtimes(showtimes.filter((t) => t !== time));
+  const handleRemoveShowtime = (time, date) => {
+    setShowtimes(showtimes.filter((s) => !(s.time === time && s.date === date)));
   };
 
   const handleGoBack = () => navigate("/");
@@ -155,26 +189,31 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3" controlId="title">
-                <Form.Label>Título<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Título<span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar título"
                   value={title}
-                  onChange={e => setTitle(e.target.value)}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3" controlId="director">
-                <Form.Label>Director<span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Director<span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingresar director"
                   value={director}
-                  onChange={e => setDirector(e.target.value)}
+                  onChange={(e) => setDirector(e.target.value)}
                 />
               </Form.Group>
             </Col>
+
             <Col md={6}>
               <Form.Group className="mb-3" controlId="category">
                 <Form.Label>Categoría</Form.Label>
@@ -182,10 +221,11 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   type="text"
                   placeholder="Ingresar categoría"
                   value={category}
-                  onChange={e => setCategory(e.target.value)}
+                  onChange={(e) => setCategory(e.target.value)}
                 />
               </Form.Group>
             </Col>
+
             <Col md={6}>
               <Form.Group className="mb-3" controlId="language">
                 <Form.Label>Idioma</Form.Label>
@@ -193,10 +233,11 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   type="text"
                   placeholder="Ingresar idioma"
                   value={language}
-                  onChange={e => setLanguage(e.target.value)}
+                  onChange={(e) => setLanguage(e.target.value)}
                 />
               </Form.Group>
             </Col>
+
             <Col md={12}>
               <Form.Group className="mb-3" controlId="summary">
                 <Form.Label>Resumen</Form.Label>
@@ -205,38 +246,96 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   rows={3}
                   placeholder="Ingresar resumen"
                   value={summary}
-                  onChange={e => setSummary(e.target.value)}
+                  onChange={(e) => setSummary(e.target.value)}
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3" controlId="duration">
-                <Form.Label>Duración (min)</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Ingresar duración"
-                  value={duration}
-                  onChange={e => setDuration(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
+
+            <Row className="align-items-center mb-3">
+              <Col md={6}>
+                <Form.Group controlId="duration">
+                  <Form.Label>Duración (min)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Ingresar duración"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    style={{ maxWidth: "150px", marginLeft: "20px" }}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group controlId="showDate">
+                  <Form.Label>Fecha de Función</Form.Label>
+                  <div className="date-selector d-flex justify-content-start gap-3">
+                    {[...Array(6)].map((_, i) => {
+                      const date = new Date();
+                      date.setDate(date.getDate() + i);
+                      const label = date.toLocaleDateString("es-AR", {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "short",
+                      });
+
+                      return (
+                        <div
+                          key={i}
+                          className={`date-block ${selectedDate.toDateString() ===
+                              date.toDateString()
+                              ? "selected"
+                              : ""
+                            }`}
+                          onClick={() =>
+                            setSelectedDate(
+                              new Date(
+                                date.getFullYear(),
+                                date.getMonth(),
+                                date.getDate()
+                              )
+                            )
+                          }
+                        >
+                          {label}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Form.Group>
+              </Col>
+            </Row>
+
             <Col md={12}>
               <Form.Group className="mb-3" controlId="showtimes">
                 <Form.Label>Horarios de Función</Form.Label>
                 <div className="d-flex flex-wrap align-items-center gap-2">
                   <Form.Select
-                    onChange={(e) => handleAddShowtime(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value) handleAddShowtime(value);
+                      e.target.value = "";
+                    }}
                     value=""
                   >
                     <option value="">Seleccionar horario...</option>
                     {allTimes.map((t) => {
-                      const start = toMinutes(t);
-                      const end = start + parseInt(duration || 0);
-                      const isOccupied = occupied.some(o => rangesOverlap(start, end, o.start, o.end));
+                      const dateStr = formatDate(selectedDate);
+                      const durationInt = parseInt(duration, 10) || 0;
+
+                      const newStart = toMinutes(dateStr, t);
+                      const newEnd = newStart + durationInt;
+
+                      const conflicto = occupied.find((o) => {
+                        const occStart = toMinutes(o.date, o.time);
+                        const occEnd = occStart + parseInt(o.duration || durationInt, 10);
+                        return rangesOverlap(newStart, newEnd, occStart, occEnd);
+                      });
+
+                      const ocupado = Boolean(conflicto);
 
                       return (
-                        <option key={t} value={t} disabled={isOccupied}>
-                          {t} {isOccupied ? "⛔ (Ocupado)" : ""}
+                        <option key={t} value={t} disabled={ocupado}>
+                          {t} {ocupado ? `⛔ (Ocupado por ${conflicto.title})` : ""}
                         </option>
                       );
                     })}
@@ -244,14 +343,19 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
 
 
                   <div className="d-flex flex-wrap gap-2 mt-2">
-                    {showtimes.map((t) => (
-                      <span key={t} className="badge bg-info text-dark">
-                        {t}
+                    {showtimes.map((s) => (
+                      <span
+                        key={`${s.date}-${s.time}`}
+                        className="badge bg-info text-dark"
+                      >
+                        {s.time} {s.date ? `(${s.date})` : "(sin fecha)"}
                         <Button
                           variant="link"
                           size="sm"
                           className="ms-1 p-0"
-                          onClick={() => handleRemoveShowtime(t)}
+                          onClick={() =>
+                            handleRemoveShowtime(s.time, s.date)
+                          }
                         >
                           ❌
                         </Button>
@@ -269,10 +373,11 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   type="text"
                   placeholder="Ingresar URL de imagen"
                   value={imageUrl}
-                  onChange={e => setImageUrl(e.target.value)}
+                  onChange={(e) => setImageUrl(e.target.value)}
                 />
               </Form.Group>
             </Col>
+
             <Col md={6}>
               <Form.Group className="mb-3" controlId="bannerUrl">
                 <Form.Label>URL de Banner</Form.Label>
@@ -280,26 +385,36 @@ const MovieForm = ({ movie, onMovieAdded, isEditing = false }) => {
                   type="text"
                   placeholder="Ingresar URL del banner"
                   value={bannerUrl}
-                  onChange={e => setBannerUrl(e.target.value)}
+                  onChange={(e) => setBannerUrl(e.target.value)}
                 />
               </Form.Group>
             </Col>
           </Row>
 
           <Row className="justify-content-end">
-            <Col md={3} className="d-flex flex-column justify-content-end align-items-end">
+            <Col
+              md={3}
+              className="d-flex flex-column justify-content-end align-items-end"
+            >
               <Form.Check
                 type="switch"
                 id="available"
                 className="mb-3"
                 label="¿Disponible?"
                 checked={isAvailable}
-                onChange={e => setIsAvailable(e.target.checked)}
+                onChange={(e) => setIsAvailable(e.target.checked)}
               />
-              <Button variant="secondary" onClick={handleGoBack} type="button" className="mb-3">
+              <Button
+                variant="secondary"
+                onClick={handleGoBack}
+                type="button"
+                className="mb-3"
+              >
                 Volver
               </Button>
-              <Button type="submit">{isEditing ? "Editar Película" : "Agregar Película"}</Button>
+              <Button type="submit">
+                {isEditing ? "Editar Película" : "Agregar Película"}
+              </Button>
             </Col>
           </Row>
         </Form>

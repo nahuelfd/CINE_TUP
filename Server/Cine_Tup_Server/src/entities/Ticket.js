@@ -28,7 +28,12 @@ export const Ticket = sequelize.define("ticket", {
   showtime: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  showDate: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
 }, { timestamps: false });
 
 // relacion de ticket como movie y user
