@@ -110,3 +110,38 @@
   font-size: 1.5rem;
   color: var(--text-color);
 }
+
+.movie-tickets__showtimes {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.showtimes-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.showtime-btn {
+  background-color: var(--accent);
+  color: var(--accent);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.showtime-btn.active {
+  background-color: var(--primary);
+  transform: scale(1.45);
+}
+
+.movie-tickets__seat-section {
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 10px;
+}
+

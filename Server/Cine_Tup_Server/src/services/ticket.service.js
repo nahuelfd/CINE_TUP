@@ -21,10 +21,14 @@ export const findTicket = async (req, res) => {
 
 export const createTicket = async (req, res) => {
   try {
-    const { seatNumber, movieId } = req.body;
+    const { seatNumber, movieId, showtime } = req.body;
     const userId = req.user.id;
 
-    const ticket = await Ticket.findOne({ where: { movieId, seatNumber } });
+    if (!seatNumber || !movieId || !showtime) {
+      return res.status(400).json({ message: "seatNumber, movieId y showtime son requeridos" });
+    }
+
+    const ticket = await Ticket.findOne({ where: { movieId, seatNumber, showtime } });
 
     if (!ticket)
       return res.status(404).json({ message: "Butaca no encontrada" });

@@ -36,7 +36,12 @@ export const Movie = sequelize.define("movie", {
     isAvailable: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
-    }
+    },
+    showtimes: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+    },
 
 
 }, { timestamps: false })
