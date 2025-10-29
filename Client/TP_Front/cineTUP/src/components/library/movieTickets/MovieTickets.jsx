@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useFetch from "../../../useFetch/useFetch";
 import { useParams } from "react-router-dom";
 import "./MovieTickets.css";
+import SimpleAlert from "../../SimpleAlert";
 
 const MovieTickets = () => {
   const { id } = useParams();
@@ -12,6 +13,16 @@ const MovieTickets = () => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [processing, setProcessing] = useState(false);
+  const [alertShow, setAlertShow] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("info");
+
+  const showAlert = (message, variant = "info", duration = 4000) => {
+    setAlertMessage(message);
+    setAlertVariant(variant);
+    setAlertShow(true);
+    setTimeout(() => setAlertShow(false), duration);
+  };
 
   
   useEffect(() => {
@@ -54,13 +65,13 @@ const MovieTickets = () => {
   // Compra sencilla: por cada asientose hacxe POST /ticket con seatNumber, movieId, showtime
   const handlePurchase = async () => {
     if (!selectedSeats.length) {
-      alert("Seleccioná al menos una butaca");
+      showAlert("Seleccioná al menos una butaca", "warning");
       return;
     }
 
     const token = localStorage.getItem("cine-tup-token");
     if (!token) {
-      alert("Debes iniciar sesión para comprar tickets");
+      showAlert("Debes iniciar sesión para comprar tickets", "warning");
       return;
     }
 
@@ -77,14 +88,15 @@ const MovieTickets = () => {
         });
       }
 
-      alert("Compra realizada con éxito");
+      showAlert("Compra realizada con éxito", "success");
+
       // refrescar tickets
       const updated = await get(`/tickets/movie/${id}`, true);
       setTickets(updated || []);
       setSelectedSeats([]);
     } catch (err) {
       console.error("Error al comprar:", err);
-      alert(err?.message || "Error al comprar los tickets");
+      showAlert(err?.message || "Error al comprar los tickets", "danger");
     } finally {
       setProcessing(false);
     }
@@ -139,8 +151,8 @@ const MovieTickets = () => {
                   <div
                     key={`${s.date}-${s.time}-${i}`}
                     className={`showtime-card ${selectedTime?.date === s.date && selectedTime?.time === s.time
-                        ? "selected"
-                        : ""
+                      ? "selected"
+                      : ""
                       }`}
                     onClick={() => {
                       setSelectedTime(s);
@@ -195,6 +207,14 @@ const MovieTickets = () => {
           </div>
         </div>
       </div>
+      <SimpleAlert
+        show={alertShow}
+        message={alertMessage}
+        variant={alertVariant}
+        onClose={() => setAlertShow(false)}
+        duration={4000}
+      />
+
     </div>
   );
 };

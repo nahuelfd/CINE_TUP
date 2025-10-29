@@ -8,11 +8,13 @@ import { ThemeProvider } from './context/ThemeContext.jsx';
 import AuthContextProvider from './context/AuthContextProvider.jsx';
 
 createRoot(document.getElementById('root')).render(
-  <ThemeProvider>
+    
     <StrictMode>
-      <AuthContextProvider>
-        <App />
-      </AuthContextProvider>
+      <ThemeProvider>
+        <AuthContextProvider>
+          <App />
+        </AuthContextProvider>
+      </ThemeProvider>
     </StrictMode>,
-  </ThemeProvider>
+  
 );

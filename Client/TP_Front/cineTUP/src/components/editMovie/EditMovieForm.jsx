@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Card, Form, Row, Col, Button, Badge } from "react-bootstrap";
 import "./EditMovieForm.css";
+import SimpleAlert from "../SimpleAlert";
+
 const EditMovieForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,6 +23,17 @@ const EditMovieForm = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [showtimes, setShowtimes] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [alertShow, setAlertShow] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("info");
+
+  const showAlert = (message, variant = "info", duration = 4000) => {
+    setAlertMessage(message);
+    setAlertVariant(variant);
+    setAlertShow(true);
+    setTimeout(() => setAlertShow(false), duration);
+  };
+
 
   const formatDate = (d) => {
     const yyyy = d.getFullYear();
@@ -75,7 +88,7 @@ const EditMovieForm = () => {
         if (firstWithDate) setSelectedDate(new Date(firstWithDate.date));
       } catch (err) {
         console.error(err);
-        alert("Error cargando la película");
+        showAlert("Error cargando la película", "danger");
       } finally {
         setLoading(false);
       }
@@ -84,67 +97,67 @@ const EditMovieForm = () => {
   }, [id]);
 
   const handleAddShowtime = (time) => {
-  if (!selectedDate) {
-    alert("Primero selecciona una fecha para agregar un horario.");
-    return;
-  }
-
-  if (!duration) {
-    alert("Primero ingresa la duración de la película.");
-    return;
-  }
-
-  const dateStr = formatDate(selectedDate);
-  const newStart = toMinutes(dateStr, time);
-  const newEnd = newStart + parseInt(duration, 10);
-
-  for (const s of showtimes) {
-    const sStart = toMinutes(s.date, s.time);
-    const sEnd = sStart + parseInt(duration, 10);
-    if (rangesOverlap(newStart, newEnd, sStart, sEnd)) {
-      alert(`El horario ${time} (${dateStr}) se solapa con ${s.time} (${s.date}).`);
+    if (!selectedDate) {
+      showAlert("Primero selecciona una fecha para agregar un horario.", "warning");
       return;
     }
-  }
 
-  const newShowtimes = [...showtimes, { date: dateStr, time }];
-  setShowtimes(newShowtimes);
+    if (!duration) {
+      showAlert("Primero ingresa la duración de la película.", "warning");
+      return;
+    }
 
+    const dateStr = formatDate(selectedDate);
+    const newStart = toMinutes(dateStr, time);
+    const newEnd = newStart + parseInt(duration, 10);
 
-  setIsAvailable(newShowtimes.some(s => s.time && s.date));
-};
+    for (const s of showtimes) {
+      const sStart = toMinutes(s.date, s.time);
+      const sEnd = sStart + parseInt(duration, 10);
+      if (rangesOverlap(newStart, newEnd, sStart, sEnd)) {
+        showAlert(`El horario ${time} (${dateStr}) se solapa con ${s.time} (${s.date}).`, "danger");
+        return;
+      }
+    }
 
-const handleRemoveShowtime = (time, date) => {
-  const newShowtimes = showtimes.filter((s) => !(s.time === time && s.date === date));
-  setShowtimes(newShowtimes);
-
-  setIsAvailable(newShowtimes.some(s => s.time && s.date));
-};
-
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSaving(true);
-
-  const validShowtimes = showtimes
-    .filter(s => s.time) 
-    .map((s) => ({ date: s.date || null, time: s.time }));
+    const newShowtimes = [...showtimes, { date: dateStr, time }];
+    setShowtimes(newShowtimes);
 
 
-  const available = validShowtimes.some(s => s.time && s.date);
-
-  const updatedMovie = {
-    title: title || "",
-    director: director || "",
-    category: category || "",
-    summary: summary || "",
-    imageUrl: imageUrl || "",
-    bannerUrl: bannerUrl || "",
-    duration: parseInt(duration, 10) || 0,
-    language: language || "",
-    isAvailable: available,
-    showtimes: validShowtimes,
+    setIsAvailable(newShowtimes.some(s => s.time && s.date));
   };
+
+  const handleRemoveShowtime = (time, date) => {
+    const newShowtimes = showtimes.filter((s) => !(s.time === time && s.date === date));
+    setShowtimes(newShowtimes);
+
+    setIsAvailable(newShowtimes.some(s => s.time && s.date));
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+
+    const validShowtimes = showtimes
+      .filter(s => s.time)
+      .map((s) => ({ date: s.date || null, time: s.time }));
+
+
+    const available = validShowtimes.some(s => s.time && s.date);
+
+    const updatedMovie = {
+      title: title || "",
+      director: director || "",
+      category: category || "",
+      summary: summary || "",
+      imageUrl: imageUrl || "",
+      bannerUrl: bannerUrl || "",
+      duration: parseInt(duration, 10) || 0,
+      language: language || "",
+      isAvailable: available,
+      showtimes: validShowtimes,
+    };
 
     try {
       const token = localStorage.getItem("cine-tup-token");
@@ -160,15 +173,24 @@ const handleSubmit = async (e) => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Error al actualizar la película");
+        showAlert(data.message || "Error al actualizar la película", "danger");
         return;
       }
 
-      alert("Película actualizada correctamente");
+      if (!res.ok) {
+        showAlert(data.message || "Error al actualizar la película", "danger");
+        return;
+      }
+
+      sessionStorage.setItem(
+        "alert",
+        JSON.stringify({ message: "Película actualizada correctamente", variant: "success" })
+      );
+
       navigate("/editar");
     } catch (err) {
       console.error("Error updating movie:", err);
-      alert("Error al actualizar la película");
+      showAlert("Error al actualizar la película", "danger");
     } finally {
       setSaving(false);
     }
@@ -185,37 +207,37 @@ const handleSubmit = async (e) => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Título</Form.Label>
-                <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
+                <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Director</Form.Label>
-                <Form.Control type="text" value={director} onChange={(e) => setDirector(e.target.value)}/>
+                <Form.Control type="text" value={director} onChange={(e) => setDirector(e.target.value)} />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Categoría</Form.Label>
-                <Form.Control type="text" value={category} onChange={(e) => setCategory(e.target.value)}/>
+                <Form.Control type="text" value={category} onChange={(e) => setCategory(e.target.value)} />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Idioma</Form.Label>
-                <Form.Control type="text" value={language} onChange={(e) => setLanguage(e.target.value)}/>
+                <Form.Control type="text" value={language} onChange={(e) => setLanguage(e.target.value)} />
               </Form.Group>
             </Col>
             <Col md={12}>
               <Form.Group className="mb-3">
                 <Form.Label>Resumen</Form.Label>
-                <Form.Control as="textarea" rows={3} value={summary} onChange={(e) => setSummary(e.target.value)}/>
+                <Form.Control as="textarea" rows={3} value={summary} onChange={(e) => setSummary(e.target.value)} />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Duración (min)</Form.Label>
-                <Form.Control type="number" value={duration} onChange={(e) => setDuration(e.target.value)}/>
+                <Form.Control type="number" value={duration} onChange={(e) => setDuration(e.target.value)} />
               </Form.Group>
             </Col>
 
@@ -244,7 +266,7 @@ const handleSubmit = async (e) => {
             <Col md={12}>
               <Form.Group className="mb-3">
                 <Form.Label>Horarios</Form.Label>
-                <Form.Select onChange={(e) => { if(e.target.value) handleAddShowtime(e.target.value); e.target.value = "" }} value="">
+                <Form.Select onChange={(e) => { if (e.target.value) handleAddShowtime(e.target.value); e.target.value = "" }} value="">
                   <option value="">Seleccionar horario...</option>
                   {allTimes.map(t => (
                     <option key={t} value={t}>{t}</option>
@@ -264,13 +286,13 @@ const handleSubmit = async (e) => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>URL de Imagen</Form.Label>
-                <Form.Control type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)}/>
+                <Form.Control type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>URL de Banner</Form.Label>
-                <Form.Control type="text" value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)}/>
+                <Form.Control type="text" value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} />
               </Form.Group>
             </Col>
           </Row>
@@ -279,6 +301,14 @@ const handleSubmit = async (e) => {
           <Button variant="secondary" className="ms-2" onClick={() => navigate("/editar")}>Volver</Button>
         </Form>
       </Card.Body>
+      <SimpleAlert
+        show={alertShow}
+        variant={alertVariant}
+        message={alertMessage}
+        onClose={() => setAlertShow(false)}
+        duration={4000}
+      />
+
     </Card>
   );
 };

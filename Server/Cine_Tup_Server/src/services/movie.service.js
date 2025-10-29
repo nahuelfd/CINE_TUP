@@ -285,37 +285,48 @@ export const updateMovie = async (req, res) => {
       showtimes: newShowtimes,
     });
 
-    // Crear tickets si la película es disponible
-    if (isAvailable && newShowtimes.length > 0) {
-      const rows = ["A", "B", "C", "D", "E"];
-      const seatsPerRow = 10;
-      const tickets = [];
+    const existingTickets = await Ticket.findAll({ where: { movieId: movie.id } });
+    const existingShowtimesSet = new Set(
+      existingTickets.map((t) => `${t.showDate || ""}_${t.showtime}`)
+    );
 
-      for (const s of newShowtimes) {
-        const time = s.time;
+    const rows = ["A", "B", "C", "D", "E"];
+    const seatsPerRow = 10;
+    const newTickets = [];
+
+    for (const s of newShowtimes) {
+      const showKey = `${s.date || ""}_${s.time}`;
+      if (!existingShowtimesSet.has(showKey)) {
         for (const row of rows) {
           for (let i = 1; i <= seatsPerRow; i++) {
-            tickets.push({
+            newTickets.push({
               seatNumber: `${row}${i}`,
               price: 10000,
               movieId: movie.id,
               isAvailable: true,
-              showtime: time,
+              showtime: s.time,
               showDate: s.date || null,
             });
           }
         }
       }
-
-      if (tickets.length) await Ticket.bulkCreate(tickets);
     }
 
-    res.json(movie);
+    if (newTickets.length > 0) {
+      await Ticket.bulkCreate(newTickets);
+    }
+
+    res.json({
+      message: "Película actualizada correctamente",
+      addedTickets: newTickets.length,
+      totalTickets: existingTickets.length + newTickets.length,
+    });
   } catch (err) {
     console.error("Error updating movie:", err);
     res.status(500).json({ message: "Error al actualizar película" });
   }
 };
+
 export const deleteMovie = async (req, res) => {
   try {
     const { id } = req.params;
@@ -324,7 +335,7 @@ export const deleteMovie = async (req, res) => {
       return res
         .status(ERROR_CODE.NOT_FOUND)
         .json({ message: "Pelicula no encontrada" });
-
+    await Ticket.destroy({ where: { movieId: id } });
     await movie.destroy();
     res.json({ message: `Pelicula con ID ${id} eliminada` });
   } catch (err) {

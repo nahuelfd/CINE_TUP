@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Card, Col, Form, Row, Button } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "./AddMovie.css";
+import SimpleAlert from "../SimpleAlert";
 
 const MovieForm = ({ onMovieAdded, movie }) => {
   const navigate = useNavigate();
@@ -27,6 +28,16 @@ const MovieForm = ({ onMovieAdded, movie }) => {
   const [showtimes, setShowtimes] = useState(initShowtimes);
   const [occupied, setOccupied] = useState([]);
   const [movies, setMovies] = useState([]);
+  const [alertShow, setAlertShow] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("info");
+
+  const showAlert = (message, variant = "info", duration = 4000) => {
+    setAlertMessage(message);
+    setAlertVariant(variant);
+    setAlertShow(true);
+    setTimeout(() => setAlertShow(false), duration);
+  };
 
 
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -100,7 +111,7 @@ const MovieForm = ({ onMovieAdded, movie }) => {
       !imageUrl ||
       !bannerUrl
     ) {
-      alert("Todos los campos son obligatorios.");
+      showAlert("Todos los campos son obligatorios.", "warning");
       return;
     }
 
@@ -108,9 +119,7 @@ const MovieForm = ({ onMovieAdded, movie }) => {
       (m) => m.title.toLowerCase().trim() === title.toLowerCase().trim()
     );
     if (exist) {
-      alert(
-        "Ya existe una película cargada con este título."
-      );
+      showAlert("Ya existe una película cargada con este título.", "warning");
       return;
     }
 
@@ -118,15 +127,17 @@ const MovieForm = ({ onMovieAdded, movie }) => {
     const tieneHorario = showtimes.some((s) => s.time);
 
     if (tieneFecha && !tieneHorario) {
-      alert(
-        "Seleccionaste una fecha pero no un horario. Debes completar ambos para cargarla en Cartelera."
+      showAlert(
+        "Seleccionaste una fecha pero no un horario. Debes completar ambos para cargarla en Cartelera.",
+        "warning"
       );
       return;
     }
 
     if (!tieneFecha && tieneHorario) {
-      alert(
-        "Seleccionaste un horario pero no una fecha. Debes completar ambos para cargarla en Cartelera."
+      showAlert(
+        "Seleccionaste un horario pero no una fecha. Debes completar ambos para cargarla en Cartelera.",
+        "warning"
       );
       return;
     }
@@ -136,10 +147,11 @@ const MovieForm = ({ onMovieAdded, movie }) => {
     if (tieneFecha && tieneHorario) {
       isAvailable = true;
     } else if (!tieneFecha && !tieneHorario) {
-      const confirmEstreno = window.confirm(
-        "No seleccionaste fecha ni horario.\n¿Deseas cargar esta película como 'Próximo Estreno'?"
+      showAlert(
+        "No seleccionaste fecha ni horario. La película se cargará como 'Próximo Estreno'.",
+        "info",
+        5000
       );
-      if (!confirmEstreno) return;
       isAvailable = false;
     }
 
@@ -169,12 +181,12 @@ const MovieForm = ({ onMovieAdded, movie }) => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Error al guardar la película");
+        showAlert(data.message || "Error al guardar la película", "danger");
         return;
       }
 
       onMovieAdded();
-      alert("Película agregada con éxito");
+      showAlert("Película agregada con éxito", "success");
 
       setTitle("");
       setDirector("");
@@ -188,7 +200,7 @@ const MovieForm = ({ onMovieAdded, movie }) => {
       setSelectedDate(null);
     } catch (err) {
       console.error("Error creando película:", err);
-      alert("Error inesperado al guardar la película");
+      showAlert("Error inesperado al guardar la película", "danger");
     }
   };
 
@@ -205,12 +217,12 @@ const MovieForm = ({ onMovieAdded, movie }) => {
 
   const handleAddShowtime = (time) => {
     if (!selectedDate) {
-      alert("Primero selecciona una fecha para agregar un horario.");
+      showAlert("Primero selecciona una fecha para agregar un horario.", "warning");
       return;
     }
 
     if (!duration) {
-      alert("Primero ingresa la duración de la película.");
+      showAlert("Primero ingresa la duración de la película.", "warning");
       return;
     }
 
@@ -222,8 +234,8 @@ const MovieForm = ({ onMovieAdded, movie }) => {
       const sStart = toMinutes(s.date, s.time);
       const sEnd = sStart + parseInt(duration, 10);
       if (rangesOverlap(newStart, newEnd, sStart, sEnd)) {
-        alert(
-          `El horario ${time} (${dateStr}) se solapa con ${s.time} (${s.date}).`
+        showAlert(
+          `El horario ${time} (${dateStr}) se solapa con ${s.time} (${s.date}).`, "warning"
         );
         return;
       }
@@ -236,7 +248,7 @@ const MovieForm = ({ onMovieAdded, movie }) => {
     });
 
     if (isOccupied) {
-      alert("Ese horario está ocupado por otra película.");
+      showAlert("Ese horario está ocupado por otra película.", "warning");
       return;
     }
 
@@ -526,6 +538,14 @@ const MovieForm = ({ onMovieAdded, movie }) => {
           </Row>
         </Form>
       </Card.Body>
+      <SimpleAlert
+        show={alertShow}
+        message={alertMessage}
+        variant={alertVariant}
+        onClose={() => setAlertShow(false)}
+        duration={4000}
+      />
+
     </Card>
   );
 };

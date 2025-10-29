@@ -1,6 +1,6 @@
 
 .sysadmin-wrapper {
-  background: linear-gradient(135deg, #e2e5e8, #cfd4d7);
+  background-color: var(--background-color);
   min-height: 100vh;
   display: flex;
   justify-content: center;

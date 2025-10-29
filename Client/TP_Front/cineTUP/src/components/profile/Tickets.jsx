@@ -1,12 +1,33 @@
 import { useEffect, useState, useCallback } from "react";
 import "./Tickets.css";
+import SimpleAlert from "../SimpleAlert";
 
 const MyTickets = () => {
   const [tickets, setTickets] = useState([]);
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("cine-tup-token");
+  const [alertShow, setAlertShow] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("info");
+
+  // Función para mostrar alertas
+  const showAlert = (message, variant = "info", duration = 4000) => {
+    setAlertMessage(message);
+    setAlertVariant(variant);
+    setAlertShow(true);
+    setTimeout(() => setAlertShow(false), duration);
+  };
+
+  // Función para mostrar confirmación (devuelve una promesa)
+  const showConfirm = (message) => {
+    return new Promise((resolve) => {
+      const confirmed = window.confirm(message); // o reemplazar por un modal si quieres
+      resolve(confirmed);
+    });
+  };
 
   console.log("Rendering Tickets", tickets);
+
   const fetchTickets = useCallback(async () => {
     try {
       const res = await fetch("http://localhost:3000/tickets/my", {
@@ -27,10 +48,11 @@ const MyTickets = () => {
 
   useEffect(() => {
     fetchTickets();
-  }, [fetchTickets]); 
+  }, [fetchTickets]);
 
   const cancelTicket = async (id) => {
-    if (!window.confirm("¿Seguro que querés cancelar este ticket?")) return;
+    const confirmed = await showConfirm("¿Seguro que querés cancelar este ticket?");
+    if (!confirmed) return;
 
     try {
       const res = await fetch(`http://localhost:3000/tickets/cancel/${id}`, {
@@ -40,15 +62,15 @@ const MyTickets = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Error al cancelar");
+        showAlert(data.message || "Error al cancelar", "danger");
         return;
       }
 
-      alert("Ticket cancelado con éxito");
-      // 🔄 Refrescar lista después de cancelar
+      showAlert("Ticket cancelado con éxito", "success");
       setTickets((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
       console.error(err);
+      showAlert("Error de conexión al cancelar ticket", "danger");
     }
   };
 
@@ -70,6 +92,14 @@ const MyTickets = () => {
           </div>
         ))
       )}
+      <SimpleAlert
+        show={alertShow}
+        message={alertMessage}
+        variant={alertVariant}
+        onClose={() => setAlertShow(false)}
+        duration={4000}
+      />
+
     </div>
   );
 };
