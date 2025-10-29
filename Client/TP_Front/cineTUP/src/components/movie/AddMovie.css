@@ -26,8 +26,8 @@
 
 /* 🔲 Inputs */
 .movie-form-card .form-control {
-  background-color: #262626;
-  border: 1px solid #444;
+  background-color: #222;
+  border: 1px solid #555;
   color: #fff;
   border-radius: 10px;
   transition: border-color 0.3s ease;
@@ -89,3 +89,40 @@
     font-size: 1.5rem;
   }
 }
+
+.date-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.date-block {
+  padding: 10px 12px;
+  border-radius: 50px;
+  border: 1px solid #888;
+  background-color: #1a1a1a;
+  color: #f8f9fa;
+  cursor: pointer;
+  text-align: center;
+  min-width: 75px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.date-block:hover {
+  background-color: #343a40;
+  border-color: #fff;
+}
+
+.date-block.selected {
+  background-color: #ffc107;
+  border-color: #c38901;
+  color: #000000;
+  font-weight: 700;
+}
+
+form .form-label {
+  margin-bottom: 5px;
+}
+

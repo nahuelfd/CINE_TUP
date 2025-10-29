@@ -22,7 +22,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:5173", // el origen de tu frontend
+  origin: "http://localhost:5173", 
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
@@ -34,6 +34,7 @@ app.use("/", ticketRoutes);
 
 // Inicializar base de datos y servidor
 try {
+  await sequelize.query("PRAGMA foreign_keys = ON");
   await sequelize.sync();
   app.listen(config.port, () => {
     console.log(`Server listening on port ${config.port}`);

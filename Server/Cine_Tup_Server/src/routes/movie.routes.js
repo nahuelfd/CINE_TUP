@@ -13,7 +13,7 @@ router.get("/movies", findMovies);
 router.get("/movies/:id", findMovie);
 router.post("/movies", verifyToken, createMovie);
 router.put("/movies/:id",verifyToken,  updateMovie);
-router.delete("/movies/:id",  deleteMovie);
+router.delete("/movies/:id",  verifyToken, deleteMovie);
 
  
 
