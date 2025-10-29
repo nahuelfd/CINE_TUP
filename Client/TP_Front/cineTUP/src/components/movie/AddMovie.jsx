@@ -410,27 +410,45 @@ const MovieForm = ({ onMovieAdded, movie }) => {
                     <option value="">Seleccionar horario...</option>
                     {allTimes.map((t) => {
                       if (!selectedDate) return <option key={t} value={t}>{t}</option>;
+
                       const dateStr = formatDate(selectedDate);
                       const durationInt = parseInt(duration, 10) || 0;
-
                       const newStart = toMinutes(dateStr, t);
                       const newEnd = newStart + durationInt;
 
+                      const now = new Date();
+                      const isToday =
+                        selectedDate.getFullYear() === now.getFullYear() &&
+                        selectedDate.getMonth() === now.getMonth() &&
+                        selectedDate.getDate() === now.getDate();
+
+                      const [h, m] = t.split(":").map(Number);
+                      const timeInMinutes = h * 60 + m;
+                      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+                      const isPast = isToday && timeInMinutes <= nowMinutes;
+
                       const conflicto = occupied.find((o) => {
                         const occStart = toMinutes(o.date, o.time);
-                        const occEnd =
-                          occStart + parseInt(o.duration || durationInt, 10);
+                        const occEnd = occStart + parseInt(o.duration || durationInt, 10);
                         return rangesOverlap(newStart, newEnd, occStart, occEnd);
                       });
-
                       const ocupado = Boolean(conflicto);
 
+                      const disabled = ocupado || isPast;
+
                       return (
-                        <option key={t} value={t} disabled={ocupado}>
-                          {t} {ocupado ? `⛔ (Ocupado por ${conflicto.title})` : ""}
+                        <option key={t} value={t} disabled={disabled}>
+                          {t}
+                          {isPast
+                            ? " ⏰ (Horario pasado)"
+                            : ocupado
+                              ? ` ⛔ (Ocupado por ${conflicto.title})`
+                              : ""}
                         </option>
                       );
                     })}
+
                   </Form.Select>
 
                   <div className="d-flex flex-wrap gap-2 mt-2">
