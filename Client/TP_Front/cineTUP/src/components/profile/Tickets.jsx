@@ -1,8 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
+import { useTheme } from "../../context/ThemeContext";
 import "./Tickets.css";
 import SimpleAlert from "../SimpleAlert";
 
 const MyTickets = () => {
+  const { theme } = useTheme();
   const [tickets, setTickets] = useState([]);
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("cine-tup-token");
@@ -10,7 +12,7 @@ const MyTickets = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("info");
 
-  // Función para mostrar alertas
+
   const showAlert = (message, variant = "info", duration = 4000) => {
     setAlertMessage(message);
     setAlertVariant(variant);
@@ -18,10 +20,10 @@ const MyTickets = () => {
     setTimeout(() => setAlertShow(false), duration);
   };
 
-  // Función para mostrar confirmación (devuelve una promesa)
+
   const showConfirm = (message) => {
     return new Promise((resolve) => {
-      const confirmed = window.confirm(message); // o reemplazar por un modal si quieres
+      const confirmed = window.confirm(message); 
       resolve(confirmed);
     });
   };
@@ -44,7 +46,7 @@ const MyTickets = () => {
       console.error(err);
       setMessage("Error de conexión con el servidor");
     }
-  }, [token]); // 
+  }, [token]);  
 
   useEffect(() => {
     fetchTickets();
@@ -74,33 +76,38 @@ const MyTickets = () => {
     }
   };
 
-  if (message) return <p>{message}</p>;
+ 
 
   return (
-    <div className="my-tickets-container">
-      <h2>Mis Tickets</h2>
-      {tickets.length === 0 ? (
-        <p className= "no-tickets-message">No tenés tickets comprados.</p>
-      ) : (
-        tickets.map((t) => (
-          <div key={t.id} className="ticket-card">
-            <p><strong>Película:</strong> {t.movie.title}</p>
-            <p><strong>Asiento:</strong> {t.seatNumber}</p>
-            <p><strong>Fecha:</strong> {t.showDate}</p>
-            <p><strong>Horario:</strong> {t.showtime}</p>
-            <button onClick={() => cancelTicket(t.id)}>Cancelar</button>
-          </div>
-        ))
-      )}
-      <SimpleAlert
-        show={alertShow}
-        message={alertMessage}
-        variant={alertVariant}
-        onClose={() => setAlertShow(false)}
-        duration={4000}
-      />
+    <div className={`tickets-container ${theme}`}>
+    <h2>Mis Tickets</h2>
 
-    </div>
+    {message ? (
+      <p className="no-tickets-message">{message}</p>
+    ) : tickets.length === 0 ? (
+      <div className="no-tickets-wrapper">
+        <p className="no-tickets-message">No tenés tickets comprados.</p>
+      </div>
+    ) : (
+      tickets.map((t) => (
+        <div key={t.id} className="ticket-card">
+          <p><strong>Película:</strong> {t.movie.title}</p>
+          <p><strong>Asiento:</strong> {t.seatNumber}</p>
+          <p><strong>Fecha:</strong> {t.showDate}</p>
+          <p><strong>Horario:</strong> {t.showtime}</p>
+          <button onClick={() => cancelTicket(t.id)}>Cancelar</button>
+        </div>
+      ))
+    )}
+
+    <SimpleAlert
+      show={alertShow}
+      message={alertMessage}
+      variant={alertVariant}
+      onClose={() => setAlertShow(false)}
+      duration={4000}
+    />
+  </div>
   );
 };
 

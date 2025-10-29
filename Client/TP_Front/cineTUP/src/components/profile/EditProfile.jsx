@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useTheme } from "../../context/ThemeContext"; // <-- IMPORTANTE
 import "./EditProfile.css";
 
 const EditProfile = () => {
+  const { theme } = useTheme(); // <-- obtenemos el tema
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -94,7 +96,6 @@ const EditProfile = () => {
         if (data.samePassword) {
           setMessages([data.message || "La nueva contraseña no puede ser igual a la anterior"]);
         } else if (data.message?.includes(". ")) {
-
           setMessages(data.message.split(". ").filter(Boolean).map((m) => m.trim()));
         } else {
           setMessages([data.message || "Error al actualizar el perfil"]);
@@ -115,7 +116,7 @@ const EditProfile = () => {
   if (loading) return <p className="loading">Cargando...</p>;
 
   return (
-    <div className="edit-profile-container">
+    <div className={`edit-profile-container ${theme}`}>
       <h2 className="edit-profile-title">Editar Perfil</h2>
 
       {messages.map((msg, i) => (
