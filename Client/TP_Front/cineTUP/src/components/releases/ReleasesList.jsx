@@ -2,6 +2,7 @@ import MovieItem from "../library/movieItem/MovieItem";
 import { Container, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import SimpleAlert from "../SimpleAlert";
+import "./Releases.css"
 
 const ReleasesList = ({ movies, onMovieDeleted, isAdmin }) => {
   const [alertShow, setAlertShow] = useState(false);
@@ -43,7 +44,7 @@ const ReleasesList = ({ movies, onMovieDeleted, isAdmin }) => {
 
   return (
     <>
-      <Container className="mt-4">
+      <Container className="releases-form">
         <Row xs={1} sm={2} md={3} lg={4} className="g-4">
           {upcomingMovies.map(movie => (
             <Col key={movie.id}>

@@ -1,0 +1,7 @@
+.releases-form{
+  background-color: var(--bg-color); 
+  padding-bottom: 2rem; 
+  min-height: 100vh; 
+  margin: 50px auto;
+  padding-bottom: 2rem;
+}

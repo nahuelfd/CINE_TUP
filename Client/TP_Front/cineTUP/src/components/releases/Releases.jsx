@@ -47,7 +47,7 @@ const Releases = () => {
   if (loading) return <p className="text-center mt-4">Cargando estrenos...</p>;
 
   return (
-    <div>
+    <div className="releases-form">
       <h1 className="fw-bold text-center mt-4">PRÓXIMOS ESTRENOS</h1>
       <ReleasesList movies={movies} onMovieDeleted={handleMovieDeleted} isAdmin={isAdmin} />
     </div>
