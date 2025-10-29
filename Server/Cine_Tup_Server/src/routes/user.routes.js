@@ -102,23 +102,26 @@ router.put("/users/:id/role", verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-router.put("/users/:id/suspend", verifyToken, isAdmin, async (req, res) => {
+router.delete("/users/:id", verifyToken, isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { active } = req.body; // booleano para alternar
-
     const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
-    user.active = active;
-    await user.save();
+    // Verificamos si el usuario tiene tickets
+    const tickets = await user.getTickets();
+    if (tickets.length > 0) {
+      return res.status(400).json({ message: "No se puede eliminar el usuario porque tiene tickets asignados." });
+    }
 
-    const { password, ...userData } = user.toJSON();
-    res.json(userData);
+    await user.destroy();
+    res.json({ message: `Usuario ${user.name} eliminado correctamente` });
   } catch (error) {
-    console.error("Error al suspender/reactivar usuario:", error);
-    res.status(500).json({ message: "Error al actualizar estado del usuario" });
+    console.error("Error al eliminar usuario:", error);
+    res.status(500).json({ message: "Error interno al eliminar usuario" });
   }
 });
+
+
 
 export default router;
