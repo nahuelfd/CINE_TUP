@@ -14,14 +14,14 @@ const SysadminPanel = () => {
   const [error, setError] = useState("");
   const decodedToken = token ? jwtDecode(token) : null;
   const loggedUserId = decodedToken?.id;
-   // para los modales
+  // para los modales
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showDeletedModal, setShowDeletedModal] = useState(false);
   const [deletedModalMessage, setDeletedModalMessage] = useState("");
   const [deletedModalVariant, setDeletedModalVariant] = useState("success");
- 
+
   const [showConfirmRoleModal, setShowConfirmRoleModal] = useState(false);
   const [pendingRoleChange, setPendingRoleChange] = useState({ userId: null, newRole: "" });
 
@@ -32,18 +32,19 @@ const SysadminPanel = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createModalMessage, setCreateModalMessage] = useState("");
   const [createModalVariant, setCreateModalVariant] = useState("success");
+  const [showCreateResultModal, setShowCreateResultModal] = useState(false);
 
   // para el new user
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  
+
 
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  
+
   const validateName = (value) => (!value.trim() ? "El nombre es obligatorio" : "");
   const validateEmail = (value) => {
     const regex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -86,7 +87,10 @@ const SysadminPanel = () => {
         }),
       });
 
-      if (!res.ok) throw new Error("No se pudo crear el usuario");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "No se pudo crear el usuario");
+      }
 
       const createdUser = await res.json();
 
@@ -97,20 +101,21 @@ const SysadminPanel = () => {
       setNewName("");
       setNewEmail("");
       setNewPassword("");
-      setNewRole("user");
+      //setNewRole("user");
       setNameError("");
       setEmailError("");
       setPasswordError("");
 
       // mostrar modal de éxito
-      setCreateModalMessage(`Usuario "${createdUser.name}" creado correctamente.`);
+      setCreateModalMessage(`Usuario creado correctamente.`);
       setCreateModalVariant("success");
-      setShowCreateModal(true);
+      setShowCreateResultModal(true);
     } catch (error) {
       console.error(error);
       setCreateModalMessage(error.message || "No se pudo crear el usuario");
       setCreateModalVariant("danger");
-      setShowCreateModal(true);
+      setShowCreateResultModal(true);
+      
     }
   };
 
@@ -137,7 +142,7 @@ const SysadminPanel = () => {
   // confirma?? cambio de rrrol
   const handleRoleChange = (userId, newRole) => {
     const user = users.find((u) => u.id === userId);
-    if (user && user.role === newRole) return; 
+    if (user && user.role === newRole) return;
 
     setPendingRoleChange({ userId, newRole });
     setShowConfirmRoleModal(true);
@@ -150,7 +155,7 @@ const SysadminPanel = () => {
 
     try {
       const token = localStorage.getItem("cine-tup-token");
-      
+
 
       const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/${userId}/role`, {
         method: "PUT",
@@ -193,7 +198,7 @@ const SysadminPanel = () => {
         }
       );
 
-      const data = await response.json(); 
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || "Error al eliminar usuario");
@@ -201,7 +206,7 @@ const SysadminPanel = () => {
 
       setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
       setShowDeleteModal(false);
-      setDeletedModalMessage(data.message); 
+      setDeletedModalMessage(data.message);
       setDeletedModalVariant("success");
       setShowDeletedModal(true);
       setSelectedUser(null);
@@ -268,14 +273,14 @@ const SysadminPanel = () => {
 
           {isLoading && <p className="text-center mt-3">Cargando...</p>}
 
-          
+
           <div className="d-flex justify-content-end mb-3">
             <Button className='warning' variant="success" onClick={() => setShowCreateModal(true)}>
               Crear nuevo usuario
             </Button>
           </div>
-              
-          
+
+
           <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Confirmar eliminación</Modal.Title>
@@ -355,7 +360,7 @@ const SysadminPanel = () => {
             </Modal.Footer>
           </Modal>
 
-     
+
           <Modal
             show={showCreateModal}
             onHide={() => setShowCreateModal(false)}
@@ -423,9 +428,34 @@ const SysadminPanel = () => {
             </Modal.Body>
           </Modal>
 
+          <Modal
+            show={showCreateResultModal}
+            onHide={() => setShowCreateResultModal(false)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>
+                {createModalVariant === "success" ? "✅ Usuario creado" : "⚠️ Error al crear"}
+              </Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              {createModalMessage}
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button
+                variant={createModalVariant === "success" ? "success" : "danger"}
+                onClick={() => setShowCreateResultModal(false)}
+              >
+                Cerrar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
         </Container>
       </div>
-    
+
 
     </div>
   );
