@@ -74,7 +74,7 @@ export const createMovie = async (req, res) => {
       .map((s) => normalizeShowItem(s, showDate))
       .filter(Boolean);
 
-    // 🆕 Validación interna de solapamientos dentro de la misma película
+    // Validación interna de solapamientos dentro de la misma película
     for (let i = 0; i < newShowtimes.length; i++) {
       const a = newShowtimes[i];
       if (!a.date) continue;
@@ -95,7 +95,7 @@ export const createMovie = async (req, res) => {
       }
     }
 
-    // 🧩 Validación contra otras películas
+    // Validación contra otras películas
     const allMovies = await Movie.findAll();
     for (const other of allMovies) {
       const otherDuration = Number(other.duration) || 0;
@@ -133,6 +133,7 @@ export const createMovie = async (req, res) => {
       }
     }
 
+    
     const newMovie = await Movie.create({
       title,
       director,

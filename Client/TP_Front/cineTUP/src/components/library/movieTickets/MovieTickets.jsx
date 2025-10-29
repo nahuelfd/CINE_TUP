@@ -24,7 +24,7 @@ const MovieTickets = () => {
     setTimeout(() => setAlertShow(false), duration);
   };
 
-  // Traer tickets (todos para la movie; frontend filtrará por showtime)
+  
   useEffect(() => {
     let isMounted = true;
     const fetchTickets = async () => {
@@ -37,7 +37,7 @@ const MovieTickets = () => {
     };
     fetchTickets();
     return () => { isMounted = false; };
-    // intentionally only depend on `id` to avoid re-running if `get` changes reference
+    
   }, [id]);
 
   // Traer película
@@ -53,7 +53,7 @@ const MovieTickets = () => {
     };
     fetchMovie();
     return () => { isMounted = false; };
-    // intentionally only depend on `id` to avoid re-running if `get` changes reference
+    
   }, [id]);
 
   const handleSeatSelect = (ticketId) => {
@@ -62,7 +62,7 @@ const MovieTickets = () => {
     );
   };
 
-  // Compra sencilla: por cada asiento, hacemos POST /ticket con seatNumber, movieId, showtime
+  // Compra sencilla: por cada asientose hacxe POST /ticket con seatNumber, movieId, showtime
   const handlePurchase = async () => {
     if (!selectedSeats.length) {
       showAlert("Seleccioná al menos una butaca", "warning");

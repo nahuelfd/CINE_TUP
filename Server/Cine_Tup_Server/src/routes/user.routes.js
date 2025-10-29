@@ -93,7 +93,7 @@ router.put("/users/:id/role", verifyToken, isAdmin, async (req, res) => {
     user.role = role;
     await user.save();
 
-    // Excluimos el password antes de devolver el usuario actualizado
+    
     const { password, ...userData } = user.toJSON();
     res.json(userData);
   } catch (error) {

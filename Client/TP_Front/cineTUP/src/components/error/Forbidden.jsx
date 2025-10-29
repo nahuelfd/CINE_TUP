@@ -32,11 +32,11 @@ const ErrorNotFound = () => {
           "url('https://assets.goal.com/images/v3/blt170f0325b464a9b4/8b54390c8be25340af0f74023cbde58186da623b.jpg?auto=webp&format=pjpg&width=3840&quality=60')",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundAttachment: "fixed", // 👈 mantiene la imagen fija
+        backgroundAttachment: "fixed", // 
         overflow: "hidden",
       }}
     >
-      {/* Overlay oscuro */}
+      
       <div
         className="position-absolute top-0 start-0 w-100 h-100"
         style={{
@@ -45,7 +45,7 @@ const ErrorNotFound = () => {
         }}
       ></div>
 
-      {/* Contenido */}
+      
       <div style={{ zIndex: 1 }}>
         <h1 className="fw-bold display-4 mb-3">403 Acceso denegado 😢</h1>
         <p className="fs-5 mb-4">

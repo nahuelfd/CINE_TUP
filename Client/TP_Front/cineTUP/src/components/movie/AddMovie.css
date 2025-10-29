@@ -1,4 +1,4 @@
-/* 🎬 Estilos generales del formulario */
+
 .movie-form-card {
   max-width: 900px;
   margin: 3rem auto;
@@ -15,7 +15,7 @@
   transform: scale(1.01);
 }
 
-/* 📝 Estilos del encabezado */
+
 .movie-form-card h2 {
   text-align: center;
   margin-bottom: 2rem;
@@ -24,7 +24,7 @@
   color: #ffc107;
 }
 
-/* 🔲 Inputs */
+
 .movie-form-card .form-control {
   background-color: #222;
   border: 1px solid #555;
@@ -39,13 +39,13 @@
   background-color: #1e1e1e;
 }
 
-/* 🔘 Switch */
+
 .movie-form-card .form-check-input:checked {
   background-color: #ffc107;
   border-color: #ffc107;
 }
 
-/* 🟢 Botones */
+
 .movie-form-card .btn-primary {
   background-color: #ffc107;
   border: none;
@@ -74,7 +74,7 @@
   transform: scale(1.05);
 }
 
-/* 📱 Responsive */
+
 @media (max-width: 768px) {
   .movie-form-card {
     padding: 1.5rem;

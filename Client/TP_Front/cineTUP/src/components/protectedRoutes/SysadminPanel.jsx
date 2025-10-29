@@ -139,7 +139,7 @@ const SysadminPanel = () => {
     loadUsers();
   }, [role]);
 
-  // cambio de rol: abre modal de confirmación
+  // confirma?? cambio de rrrol
   const handleRoleChange = (userId, newRole) => {
     const user = users.find((u) => u.id === userId);
     if (user && user.role === newRole) return;
@@ -148,7 +148,7 @@ const SysadminPanel = () => {
     setShowConfirmRoleModal(true);
   };
 
-  // Ejecuta el cambio de rol confirmado
+  // lo cambia
   const confirmRoleChange = async () => {
     const { userId, newRole } = pendingRoleChange;
     setShowConfirmRoleModal(false);
@@ -178,7 +178,7 @@ const SysadminPanel = () => {
     }
   };
 
-  // para modal de eliminación
+  
   const handleDeleteClick = (user) => {
     setSelectedUser(user);
     setShowDeleteModal(true);
@@ -261,7 +261,7 @@ const SysadminPanel = () => {
                       size="sm"
                       className="sysadmin-btn-delete"
                       onClick={() => handleDeleteClick(user)}
-                      disabled={user.id === loggedUserId} //  no puede eliminarse a sí mismo
+                      disabled={user.id === loggedUserId} //  desactivar tambien para q no se elimine
                     >
                       Eliminar
                     </Button>

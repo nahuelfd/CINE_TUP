@@ -1,15 +1,13 @@
-/* ===========================
-   🎬 Estilos generales del formulario
-   =========================== */
+
 .edit-movie-card {
   background: linear-gradient(135deg, #1a1a1a, #2e2e2e);
   color: #fff;
-  padding: 0.6rem 1rem; /* vertical más compacto, horizontal más ancho */
+  padding: 0.6rem 1rem; 
   overflow: hidden;
   border-radius: 12px;
   transition: transform 0.3s ease;
-  max-width: 700px; /* límite de ancho para no romper layout */
-  margin: 0 auto; /* centrar horizontalmente */
+  max-width: 700px; 
+  margin: 0 auto; 
 }
 
 .edit-movie-card:hover {
@@ -21,21 +19,17 @@
   padding: 0;
 }
 
-/* ===========================
-   📝 Encabezado
-   =========================== */
+
 .edit-movie-card h2 {
   text-align: center;
-  margin-bottom: 0.8rem; /* más compacto verticalmente */
+  margin-bottom: 0.8rem; 
   font-weight: bold;
   letter-spacing: 1px;
   color: #ffc107;
   font-size: 1.5rem;
 }
 
-/* ===========================
-   🔲 Inputs y textarea
-   =========================== */
+
 .edit-movie-card .form-control,
 .edit-movie-card .form-select {
   background-color: #222;
@@ -46,7 +40,7 @@
   font-size: 0.85rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   box-sizing: border-box;
-  width: 100%; /* ocupar todo el ancho disponible */
+  width: 100%; 
 }
 
 .edit-movie-card .form-control:focus,
@@ -57,17 +51,15 @@
   color: #fff;
 }
 
-/* ===========================
-   🟢 Botones
-   =========================== */
+
 .edit-movie-card .btn-primary,
 .edit-movie-card .btn-secondary {
   border-radius: 6px;
-  padding: 0.3rem 1rem; /* más ancho horizontalmente */
+  padding: 0.3rem 1rem; 
   font-size: 0.85rem;
   transition: all 0.3s ease-in-out;
-  width: 100%; /* ancho completo */
-  margin-top: 0.2rem; /* separación mínima */
+  width: 100%; 
+  margin-top: 0.2rem; 
 }
 
 .edit-movie-card .btn-primary {
@@ -93,16 +85,14 @@
   transform: scale(1.03);
 }
 
-/* Responsive botones principales */
+
 @media (max-width: 768px) {
   .edit-movie-card h2 {
     font-size: 1.3rem;
   }
 }
 
-/* ===========================
-   🟡 Badges de horarios
-   =========================== */
+
 .edit-movie-card .badge {
   display: flex;
   align-items: center;
@@ -127,9 +117,7 @@
   font-size: 0.75rem;
 }
 
-/* ===========================
-   📅 Selector de fechas
-   =========================== */
+
 .date-block {
   padding: 3px 6px;
   border-radius: 25px;
@@ -138,7 +126,7 @@
   color: #f8f9fa;
   cursor: pointer;
   text-align: center;
-  min-width: 55px; /* ligeramente más ancho */
+  min-width: 55px; 
   transition: all 0.2s ease;
   user-select: none;
   font-size: 0.8rem;
@@ -156,7 +144,7 @@
   font-weight: 700;
 }
 
-/* Flex para fechas */
+
 .date-selector,
 .edit-movie-card .d-flex.flex-wrap {
   display: flex;
@@ -165,17 +153,13 @@
   margin-top: 0.2rem;
 }
 
-/* ===========================
-   📝 Labels
-   =========================== */
+
 form .form-label {
   margin-bottom: 3px;
   font-size: 0.8rem;
 }
 
-/* ===========================
-   🖊 Ajustes menores de spacing
-   =========================== */
+
 .edit-movie-card .form-group {
   margin-bottom: 0.3rem;
 }
