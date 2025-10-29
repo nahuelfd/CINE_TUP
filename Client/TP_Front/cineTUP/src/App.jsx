@@ -7,7 +7,7 @@ import NavBar from './components/navBar/NavBar';
 import Home from './components/home/Home'
 import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
-import EditProfile from "./components/editProfile/EditProfile";
+import Profile from './components/profile/Profile';
 import AllMovies from './components/borrador/borrador'
 import ProtectedRoute from "./components/protectedRoutes/ProtectedRoute";
 import Forbidden from "./components/error/Forbidden";
