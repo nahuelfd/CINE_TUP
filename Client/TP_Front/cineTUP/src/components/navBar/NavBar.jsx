@@ -125,7 +125,7 @@ const NavBar = () => {
               variant={theme === "dark" ? "outline-light" : "outline-dark"}
               className="fw-bold rounded-pill px-3"
             >
-              {theme === "dark" ? "☀️ Claro" : "🌙 Oscuro"}
+              {theme === "dark" ? "☀️" : "🌙"}
             </Button>
           </div>
         </Navbar.Collapse>

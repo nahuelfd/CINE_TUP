@@ -80,7 +80,7 @@ const MyTickets = () => {
     <div className="my-tickets-container">
       <h2>Mis Tickets</h2>
       {tickets.length === 0 ? (
-        <p>No tenés tickets comprados.</p>
+        <p className= "no-tickets-message">No tenés tickets comprados.</p>
       ) : (
         tickets.map((t) => (
           <div key={t.id} className="ticket-card">

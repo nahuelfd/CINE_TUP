@@ -9,24 +9,29 @@
 }
 
 .edit-profile-title {
+  font-family: Arial, sans-serif;
   text-align: center;
   margin-bottom: 20px;
-  color: #333;
+  color: black;
   font-size: 26px;
 }
 
 .edit-profile-form {
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
+  padding-top: 5px;
 }
 
 .edit-profile-label {
+  font-family: Arial, sans-serif;
   margin-bottom: 6px;
   font-weight: bold;
-  color: #555;
+  color: black;
 }
 
 .edit-profile-input {
+  font-family: Arial, sans-serif;
   padding: 10px 12px;
   margin-bottom: 16px;
   border: 1px solid #ccc;
@@ -36,12 +41,14 @@
 }
 
 .edit-profile-input:focus {
+  font-family: Arial, sans-serif;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
   outline: none;
 }
 
 button[type="submit"] {
+  font-family: Arial, sans-serif;
   padding: 12px;
   background-color: #007bff;
   color: white;
@@ -53,15 +60,18 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
+  font-family: Arial, sans-serif;
   background-color: #0056b3;
 }
 
 button[disabled] {
+  font-family: Arial, sans-serif;
   background-color: #aaa;
   cursor: not-allowed;
 }
 
 .edit-profile-message {
+  font-family: Arial, sans-serif;
   padding: 10px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -70,18 +80,21 @@ button[disabled] {
 }
 
 .edit-profile-message.success {
+  font-family: Arial, sans-serif;
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
 .edit-profile-message.error {
+  font-family: Arial, sans-serif;
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
 .loading {
+  font-family: Arial, sans-serif;
   text-align: center;
   font-size: 18px;
   color: #333;

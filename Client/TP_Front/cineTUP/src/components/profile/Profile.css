@@ -1,30 +1,37 @@
 /* Contenedor principal del perfil */
 .profile-container {
-  max-width: 700px;
-  margin: 50px auto;
   font-family: Arial, sans-serif;
+  background-color: var(--bg-color); 
+  padding-bottom: 2rem; 
+  min-height:100vh;
+  margin: 50px auto;
 }
 
 .profile-header {
+  font-family: Arial, sans-serif;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 60px;
   margin-bottom: 20px;
 }
 
 .profile-header h2 {
+  font-family: Arial, sans-serif;
   font-size: 28px;
-  color: #333;
+  color:var(--text);
   margin: 0;
 }
 
 
 .profile-buttons {
+  font-family: Arial, sans-serif;
   display: flex;
   gap: 12px;
 }
 
 .profile-buttons button {
+  font-family: Arial, sans-serif;
   padding: 8px 16px;
   border: none;
   border-radius: 8px;
@@ -36,15 +43,18 @@
 }
 
 .profile-buttons button:hover {
+  font-family: Arial, sans-serif;
   background-color: #0056b3;
 }
 
 .profile-buttons button.active {
+  font-family: Arial, sans-serif;
   background-color: #0056b3;
 }
 
 
 .edit-container {
+  font-family: Arial, sans-serif;
   background-color: #f9f9f9;
   border-radius: 12px;
   padding: 25px 30px;
