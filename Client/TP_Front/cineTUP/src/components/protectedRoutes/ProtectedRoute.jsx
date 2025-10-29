@@ -6,17 +6,17 @@ import { AuthContext } from "../../context/AuthContext";
  const ProtectedRoute = ({ children, allowedRoles }) => {
   const { role = "", token } = useContext(AuthContext);
 
-  // Si no hay token, redirige a login
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  // Si el rol no está en los permitidos, redirige a 403
+
   if (!allowedRoles.includes(role)) {
     return <Navigate to="/403" replace />;
   }
 
-  // Si todo ok, renderiza el componente protegido
+
   return children;
 };
 

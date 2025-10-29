@@ -1,0 +1,44 @@
+.movie-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--card-bg);
+  color: var(--text);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.movie-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 180px; /* Antes era 150px, lo subí para mayor altura */
+  text-align: center;
+  padding: 1rem;
+}
+
+.movie-img {
+  width: 100%;        
+  height: 300px;      /* Antes era 250px, lo subí para mostrar más imagen */
+  object-fit: cover;  
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.movie-title {
+  font-weight: 600;
+  font-size: 1.15rem;
+  margin-bottom: 0.4rem;
+}
+
+.movie-info {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.movie-section-bg {
+  background-color: var(--bg-color); /* color oscuro */
+  padding-bottom: 2rem; /* para que no corte las últimas tarjetas */
+  min-height: 100vh; /* asegura que cubra toda la altura */
+}

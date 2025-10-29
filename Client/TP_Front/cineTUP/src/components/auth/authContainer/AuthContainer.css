@@ -6,7 +6,7 @@
   background-color: var(--background-color);
 }
 
-/* Tarjeta principal */
+
 .auth-card {
   background-color: var(--card-background);
   border: none;
@@ -17,7 +17,7 @@
   max-width: 90%;
 }
 
-/* Título superior */
+
 .auth-welcome {
   color: var(--text-color);
   font-weight: 600;
@@ -25,14 +25,14 @@
   margin-bottom: 1rem;
 }
 
-/* Variables modo claro */
+
 :root {
   --background-color: #f6f6f6;
   --card-background: #ffffff;
   --text-color: #000000;
 }
 
-/* Variables modo oscuro */
+
 [data-theme="dark"] {
   --background-color: #0e0e0e;
   --card-background: #1b1b1b;
