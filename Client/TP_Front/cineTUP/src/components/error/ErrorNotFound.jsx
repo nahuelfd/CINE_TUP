@@ -15,7 +15,7 @@ const ErrorNotFound = () => {
         height: "100vh",
         width: "100%",
         backgroundImage:
-          "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT4vhhnrkyd8vZHOFpF6QurfpOy1cJLQPeYA&s')",
+          "url('https://www.miradorprovincial.com/wp-content/uploads/2025/04/Copetti-se-saco-la-mufa-y-empezo-a-sumar-goles-para-Central.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed", // 👈 mantiene la imagen fija
