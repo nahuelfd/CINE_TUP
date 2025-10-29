@@ -79,7 +79,7 @@ const NavBar = () => {
             ) : (
               <>
                 {/* Renderizado según rol */}
-                {role === "user" && (
+                {(role === "user" || role === "admin" || role === "sysadmin") && (
                   <Button
                     onClick={handleProfileClick}
                     variant={theme === "dark" ? "outline-light" : "outline-dark"}

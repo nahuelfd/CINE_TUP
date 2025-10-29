@@ -29,7 +29,7 @@ const ErrorNotFound = () => {
         height: "100vh",
         width: "100%",
         backgroundImage:
-          "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT4vhhnrkyd8vZHOFpF6QurfpOy1cJLQPeYA&s')",
+          "url('https://assets.goal.com/images/v3/blt170f0325b464a9b4/8b54390c8be25340af0f74023cbde58186da623b.jpg?auto=webp&format=pjpg&width=3840&quality=60')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed", // 👈 mantiene la imagen fija

@@ -7,7 +7,7 @@ import NavBar from './components/navBar/NavBar';
 import Home from './components/home/Home'
 import Releases from './components/releases/Releases';
 import Register from './components/auth/register/Register';
-import EditProfile from "./components/profile/EditProfile";
+import Profile from "./components/profile/Profile";
 import ProtectedRoute from "./components/protectedRoutes/ProtectedRoute";
 import Forbidden from "./components/error/Forbidden";
 import SysadminPanel from './components/protectedRoutes/SysadminPanel';
@@ -28,8 +28,8 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
-                <Profile />
+              <ProtectedRoute allowedRoles={["user", "admin", "sysadmin"]}>
+                <Profile /> 
               </ProtectedRoute>
             }
           />
