@@ -4,6 +4,7 @@ import useFetch from "../../useFetch/useFetch";
 import { Table, Button, Form, Container, Alert, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import '../protectedRoutes/Sysadmin.css';
+import SimpleAlert from "../SimpleAlert";
 
 const SysadminPanel = () => {
   const { token, role } = useContext(AuthContext);
@@ -11,27 +12,24 @@ const SysadminPanel = () => {
   const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
-  const [error, setError] = useState("");
 
-  // 🔹 Modales de eliminación
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // 🔹 Modal de confirmación de cambio de rol
   const [showConfirmRoleModal, setShowConfirmRoleModal] = useState(false);
   const [pendingRoleChange, setPendingRoleChange] = useState({ userId: null, newRole: "" });
 
-  // 🔹 Modal de notificación de resultado
-  const [showRoleModal, setShowRoleModal] = useState(false);
-  const [roleModalMessage, setRoleModalMessage] = useState("");
-  const [roleModalVariant, setRoleModalVariant] = useState("success");
-  // 🔹 Modal de confirmación al crear usuario
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [createModalMessage, setCreateModalMessage] = useState("");
-  const [createModalVariant, setCreateModalVariant] = useState("success");
+  const [alertShow, setAlertShow] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("info");
 
+  const showAlert = (message, variant = "info", duration = 4000) => {
+    setAlertMessage(message);
+    setAlertVariant(variant);
+    setAlertShow(true);
+    setTimeout(() => setAlertShow(false), duration);
+  };
 
-  // 🔹 Recuperar usuarios al cargar
   useEffect(() => {
     if (role !== "sysadmin") {
       navigate("/");
@@ -44,29 +42,28 @@ const SysadminPanel = () => {
         setUsers(data);
       } catch (err) {
         console.error("Error cargando usuarios:", err);
-        setError(err.message || "Error al cargar usuarios");
+        showAlert(err.message || "Error al cargar usuarios", "danger");
       }
     };
 
     loadUsers();
   }, [role]);
 
-  // ✅ 🔹 FUNCION QUE FALTABA: Manejar cambio de rol (abre modal de confirmación)
+
   const handleRoleChange = (userId, newRole) => {
     const user = users.find((u) => u.id === userId);
-    if (user && user.role === newRole) return; // Si no cambió, no hace nada
+    if (user && user.role === newRole) return;
 
     setPendingRoleChange({ userId, newRole });
     setShowConfirmRoleModal(true);
   };
 
-  // 🔹 Ejecuta el cambio de rol confirmado
   const confirmRoleChange = async () => {
     const { userId, newRole } = pendingRoleChange;
     setShowConfirmRoleModal(false);
 
     try {
-      const token = localStorage.getItem("cine-tup-token"); // corregido nombre
+      const token = localStorage.getItem("cine-tup-token");
 
       const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/${userId}/role`, {
         method: "PUT",
@@ -82,18 +79,13 @@ const SysadminPanel = () => {
       const updatedUser = await response.json();
       setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
 
-      setRoleModalMessage(`Rol de ${updatedUser.name} actualizado correctamente a "${updatedUser.role}"`);
-      setRoleModalVariant("success");
-      setShowRoleModal(true);
+      showAlert(`Rol de ${updatedUser.name} actualizado correctamente a "${updatedUser.role}"`, "success");
     } catch (error) {
       console.error(error);
-      setRoleModalMessage("No se pudo actualizar el rol");
-      setRoleModalVariant("danger");
-      setShowRoleModal(true);
+      showAlert("No se pudo actualizar el rol", "danger");
     }
   };
 
-  // 🔹 Modal de eliminación
   const handleDeleteClick = (user) => {
     setSelectedUser(user);
     setShowDeleteModal(true);
@@ -111,16 +103,19 @@ const SysadminPanel = () => {
       .then(async (res) => {
         if (!res.ok) {
           const errData = await res.json();
-          throw new Error(errData.message || "Error al eliminar usuario");
+          showAlert(errData.message || "Error al eliminar usuario", "danger");
+          return;
         }
+
         setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
         setShowDeleteModal(false);
         setSelectedUser(null);
       })
       .catch((err) => {
-        setError(err.message || "Error al eliminar usuario");
+        showAlert(err.message || "Error al eliminar usuario", "danger");
         setShowDeleteModal(false);
       });
+
   };
 
   if (!token) return <Alert variant="danger">No autorizado</Alert>;
@@ -132,8 +127,6 @@ const SysadminPanel = () => {
           <h2 className="mb-4 text-center fw-bold sysadmin-title">
             Panel de Administración de usuarios
           </h2>
-
-          {error && <Alert variant="danger">{error}</Alert>}
 
           <Table striped bordered hover responsive className="shadow-sm sysadmin-table">
             <thead>
@@ -177,7 +170,6 @@ const SysadminPanel = () => {
 
           {isLoading && <p className="text-center mt-3">Cargando...</p>}
 
-          {/* 🔹 FORMULARIO PARA CREAR NUEVO USUARIO */}
           <div className="mt-5 p-4 rounded shadow-sm sysadmin-create-form">
             <h4 className="mb-3 text-center fw-semibold">Crear nuevo usuario</h4>
 
@@ -190,9 +182,7 @@ const SysadminPanel = () => {
                 const role = e.target.role.value;
 
                 if (!name || !email || !password) {
-                  setCreateModalMessage("Todos los campos son obligatorios.");
-                  setCreateModalVariant("danger");
-                  setShowCreateModal(true);
+                  showAlert("Todos los campos son obligatorios.", "danger");
                   return;
                 }
 
@@ -210,22 +200,19 @@ const SysadminPanel = () => {
 
                   if (!response.ok) throw new Error("Error al crear usuario");
 
-                  await response.json(); // ignoramos el retorno
+                  await response.json();
                   e.target.reset();
 
-                  // 🔹 recarga la lista actualizada desde el backend
                   const updatedUsers = await get("/users", true);
                   setUsers(updatedUsers);
 
 
-                  setCreateModalMessage(`Usuario "${name}" creado correctamente.`);
-                  setCreateModalVariant("success");
-                  setShowCreateModal(true);
+                  showAlert(`Usuario "${name}" creado correctamente.`, "success");
+
                 } catch (error) {
                   console.error(error);
-                  setCreateModalMessage("No se pudo crear el usuario.");
-                  setCreateModalVariant("danger");
-                  setShowCreateModal(true);
+                  showAlert("No se pudo crear el usuario.", "danger");
+                  ;
                 }
               }}
             >
@@ -263,8 +250,6 @@ const SysadminPanel = () => {
 
 
 
-          {/* ... tus modales siguen exactamente igual */}
-          {/** No se toca nada debajo */}
           <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Confirmar eliminación</Modal.Title>
@@ -311,44 +296,16 @@ const SysadminPanel = () => {
             </Modal.Footer>
           </Modal>
 
-          <Modal show={showRoleModal} onHide={() => setShowRoleModal(false)} centered>
-            <Modal.Header closeButton>
-              <Modal.Title>
-                {roleModalVariant === "success" ? "Cambio realizado con éxito" : "Error"}
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{roleModalMessage}</Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" onClick={() => setShowRoleModal(false)}>
-                Cerrar
-              </Button>
-            </Modal.Footer>
-          </Modal>
-
-          {/* 🔹 Modal de confirmación de creación de usuario */}
-          <Modal
-            show={showCreateModal}
-            onHide={() => setShowCreateModal(false)}
-            centered
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>
-                {createModalVariant === "success" ? "Usuario creado" : "Error"}
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{createModalMessage}</Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant={createModalVariant === "success" ? "success" : "danger"}
-                onClick={() => setShowCreateModal(false)}
-              >
-                Cerrar
-              </Button>
-            </Modal.Footer>
-          </Modal>
-
         </Container>
       </div>
+      <SimpleAlert
+        show={alertShow}
+        message={alertMessage}
+        variant={alertVariant}
+        onClose={() => setAlertShow(false)}
+        duration={4000}
+      />
+
     </div>
   );
 
