@@ -34,6 +34,7 @@ app.use("/", ticketRoutes);
 
 // Inicializar base de datos y servidor
 try {
+  await sequelize.query("PRAGMA foreign_keys = ON");
   await sequelize.sync();
   app.listen(config.port, () => {
     console.log(`Server listening on port ${config.port}`);
