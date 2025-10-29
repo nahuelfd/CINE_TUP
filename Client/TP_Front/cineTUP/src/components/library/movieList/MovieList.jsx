@@ -1,11 +1,23 @@
 import { useState } from "react";
 import MovieItem from "../movieItem/MovieItem";
 import { Container, Row, Col, Form } from "react-bootstrap";
+import SimpleAlert from "../../SimpleAlert";
 
 const MovieList = ({ movies, onMovieDeleted, isAdmin }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [durationOrder, setDurationOrder] = useState('');
+  const [alertShow, setAlertShow] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("info");
+
+  const showAlert = (message, variant = "info", duration = 4000) => {
+    setAlertMessage(message);
+    setAlertVariant(variant);
+    setAlertShow(true);
+    setTimeout(() => setAlertShow(false), duration);
+  };
+
 
   if (!Array.isArray(movies) || movies.length === 0) {
     return <p className="text-center mt-4">No hay películas disponibles.</p>;
@@ -54,9 +66,10 @@ const MovieList = ({ movies, onMovieDeleted, isAdmin }) => {
       if (!res.ok) throw new Error("Error al eliminar la película");
 
       onMovieDeleted();
+      showAlert("Película eliminada correctamente", "success");
     } catch (err) {
       console.error(err);
-      alert("No se pudo eliminar la película");
+      showAlert("No se pudo eliminar la película", "danger");
     }
   };
 
@@ -121,6 +134,14 @@ const MovieList = ({ movies, onMovieDeleted, isAdmin }) => {
       ) : (
         <p className="text-center mt-4">No hay películas disponibles con esos filtros.</p>
       )}
+      <SimpleAlert
+        show={alertShow}
+        message={alertMessage}
+        variant={alertVariant}
+        onClose={() => setAlertShow(false)}
+        duration={4000}
+      />
+
     </Container>
   );
 }

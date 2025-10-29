@@ -127,7 +127,7 @@ const SysadminPanel = () => {
         setUsers(data);
       } catch (err) {
         console.error("Error cargando usuarios:", err);
-        setError(err.message || "Error al cargar usuarios");
+        showAlert(err.message || "Error al cargar usuarios", "danger");
       }
     };
 
@@ -150,6 +150,7 @@ const SysadminPanel = () => {
 
     try {
       const token = localStorage.getItem("cine-tup-token");
+      const token = localStorage.getItem("cine-tup-token");
 
       const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/${userId}/role`, {
         method: "PUT",
@@ -165,14 +166,10 @@ const SysadminPanel = () => {
       const updatedUser = await response.json();
       setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
 
-      setRoleModalMessage(`Rol de ${updatedUser.name} actualizado correctamente a "${updatedUser.role}"`);
-      setRoleModalVariant("success");
-      setShowRoleModal(true);
+      showAlert(`Rol de ${updatedUser.name} actualizado correctamente a "${updatedUser.role}"`, "success");
     } catch (error) {
       console.error(error);
-      setRoleModalMessage("No se pudo actualizar el rol");
-      setRoleModalVariant("danger");
-      setShowRoleModal(true);
+      showAlert("No se pudo actualizar el rol", "danger");
     }
   };
 
@@ -226,8 +223,6 @@ const SysadminPanel = () => {
           <h2 className="mb-4 text-center fw-bold sysadmin-title">
             Panel de Administración de usuarios
           </h2>
-
-          {error && <Alert variant="danger">{error}</Alert>}
 
           <Table striped bordered hover responsive className="shadow-sm sysadmin-table">
             <thead>
@@ -430,6 +425,14 @@ const SysadminPanel = () => {
 
         </Container>
       </div>
+      <SimpleAlert
+        show={alertShow}
+        message={alertMessage}
+        variant={alertVariant}
+        onClose={() => setAlertShow(false)}
+        duration={4000}
+      />
+
     </div>
   );
 };
