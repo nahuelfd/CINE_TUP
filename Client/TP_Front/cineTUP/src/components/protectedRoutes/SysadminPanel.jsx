@@ -150,7 +150,7 @@ const SysadminPanel = () => {
 
     try {
       const token = localStorage.getItem("cine-tup-token");
-      const token = localStorage.getItem("cine-tup-token");
+      
 
       const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/${userId}/role`, {
         method: "PUT",
@@ -425,13 +425,7 @@ const SysadminPanel = () => {
 
         </Container>
       </div>
-      <SimpleAlert
-        show={alertShow}
-        message={alertMessage}
-        variant={alertVariant}
-        onClose={() => setAlertShow(false)}
-        duration={4000}
-      />
+    
 
     </div>
   );

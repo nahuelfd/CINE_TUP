@@ -1,12 +1,23 @@
-import { Card, Badge, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Card, Badge, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router";
 
 const MovieItem = ({ id, title, category, duration, imageUrl, isAvailable, onDelete }) => {
+  const [modalShow, setModalShow] = useState(false);
+
   const handleDelete = () => {
+    setModalShow(true); // mostrar modal en vez de window.confirm
+  };
+
+  const confirmDelete = () => {
+    onDelete(id);
+    setModalShow(false);
+  };
+  /*const handleDelete = () => {
     if (window.confirm(`¿Deseas eliminar la película "${title}"?`)) {
       onDelete(id);
     }
-  }
+  }*/
 
   return (
     <div style={{ position: "relative" }}>
@@ -37,6 +48,23 @@ const MovieItem = ({ id, title, category, duration, imageUrl, isAvailable, onDel
           </Card.Body>
         </Card>
       </Link>
+      <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Deseas eliminar la película "{title}"?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setModalShow(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    
     </div>
   );
 };

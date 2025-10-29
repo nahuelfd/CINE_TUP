@@ -334,7 +334,7 @@ export const deleteMovie = async (req, res) => {
       return res
         .status(ERROR_CODE.NOT_FOUND)
         .json({ message: "Pelicula no encontrada" });
-
+    await Ticket.destroy({ where: { movieId: id } });
     await movie.destroy();
     res.json({ message: `Pelicula con ID ${id} eliminada` });
   } catch (err) {

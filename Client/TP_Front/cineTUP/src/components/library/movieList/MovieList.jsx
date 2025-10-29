@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MovieItem from "../movieItem/MovieItem";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Form, Modal, Button } from "react-bootstrap";
 import SimpleAlert from "../../SimpleAlert";
 
 const MovieList = ({ movies, onMovieDeleted, isAdmin }) => {
@@ -10,6 +10,7 @@ const MovieList = ({ movies, onMovieDeleted, isAdmin }) => {
   const [alertShow, setAlertShow] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("info");
+  
 
   const showAlert = (message, variant = "info", duration = 4000) => {
     setAlertMessage(message);
