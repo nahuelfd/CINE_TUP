@@ -40,7 +40,7 @@ const Dashboard = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        const role = decoded.role; // asumir que el payload tiene "role"
+        const role = decoded.role; 
         setIsAdmin(role === "admin" || role === "sysadmin");
       } catch (err) {
         console.error("Error decodificando token:", err);

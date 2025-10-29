@@ -6,7 +6,7 @@ import "./EditMovieList.css";
 
 const EditMovieList = () => {
   const [movies, setMovies] = useState([]);
-  const { theme } = useTheme(); // Lo mantenemos por si quieres usar toggleTheme
+  const { theme } = useTheme(); 
 
   useEffect(() => {
     const fetchMovies = async () => {
