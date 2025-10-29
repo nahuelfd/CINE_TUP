@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import "./Profile.css";
+import "./Tickets.css";
 
 const MyTickets = () => {
   const [tickets, setTickets] = useState([]);

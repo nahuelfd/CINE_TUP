@@ -75,6 +75,34 @@ export const deleteTicket = async (req, res) => {
   res.json({ message: `Ticket con ID ${id} eliminado` });
 };
 
+export const cancelTicketByUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const ticket = await Ticket.findByPk(id);
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket no encontrado" });
+    }
+
+    if (ticket.userId !== userId) {
+      return res.status(403).json({ message: "No podés cancelar un ticket que no te pertenece" });
+    }
+
+    await ticket.update({
+      isAvailable: true,
+      userId: null,
+      purchaseDate: null,
+    });
+
+    res.json({ message: "Ticket cancelado y asiento liberado" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al cancelar ticket" });
+  }
+};
+
 export const findTicketsByMovie = async (req, res) => {
   try {
     const movieId = parseInt(req.params.id);
@@ -85,5 +113,24 @@ export const findTicketsByMovie = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener los tickets" });
+  }
+};
+
+export const findTicketsByUser = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+    const tickets = await Ticket.findAll({
+      where: { userId },
+      include: [Movie],
+    });
+
+    if (!tickets.length) {
+      return res.status(404).json({ message: "No hay ningun ticket comprado" });
+    }
+
+    res.json(tickets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los tickets del usuario" });
   }
 };
